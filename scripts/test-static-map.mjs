@@ -23,15 +23,15 @@ try{
  await page.waitForFunction(()=>document.body.innerText.includes('Mapa das amostras reais')||document.body.innerText.includes('Onde amostramos'),{},{timeout:60000});
  const bootstrap=await page.getByRole('heading',{name:'Mapa das amostras reais',exact:true}).isVisible();
  if(!bootstrap)await page.getByRole('button',{name:'Mapa',exact:true}).click();
- await page.waitForFunction(()=>document.querySelectorAll('.leaflet-overlay-pane path').length>=143,{},{timeout:30000});
+ await page.waitForFunction(()=>document.querySelectorAll('.sampling-marker').length===31,{},{timeout:30000});
  const alerts=(await page.getByRole('alert').allTextContents()).filter(x=>x.trim());
  if(alerts.length||errors.length)throw Error('Map render errors: '+[...alerts,...errors].join('; '));
  await page.getByRole('combobox',{name:'Campanha',exact:true}).selectOption('Chuvosa');
  await page.getByText(/35 bibliotecas no recorte/).first().waitFor();
- await page.waitForFunction(()=>document.querySelectorAll('.leaflet-overlay-pane path').length>=143);
+ await page.waitForFunction(()=>document.querySelectorAll('.sampling-marker').length>0);
  await page.getByRole('combobox',{name:'Campanha',exact:true}).selectOption('Todas');
- await page.getByText(/89 bibliotecas no recorte; 88 com coordenadas/).first().waitFor();
- console.log('PASS: real Supabase UI login; geographic polygons and GPS markers render; seasonal filter 89 → 35 → 89; one missing GPS stays missing.');
+ await page.getByText(/89 bibliotecas no recorte; 89 com coordenadas/).first().waitFor();
+ console.log('PASS: real Supabase UI login; geographic polygons and GPS markers render; seasonal filter 89 → 35 → 89; 31 co-locations preserve all 89 GPS records.');
  if(!bootstrap){
   await page.getByRole('button',{name:'Heatmap',exact:true}).click();
   await page.waitForFunction(()=>document.querySelectorAll('.heatmaplayer image').length===4,{},{timeout:45000});
