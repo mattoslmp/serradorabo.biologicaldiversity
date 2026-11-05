@@ -24,6 +24,7 @@ jobs:
         id: pages
       - run: npm ci
       - run: node scripts/test-map-geometry.mjs
+      - run: node scripts/test-taxon-cutoff.mjs
       - run: node scripts/fetch-basemap.mjs
       - run: npm run build
         env:
