@@ -1,0 +1,131 @@
+{
+  "methods": [
+    {
+      "title": "Entradas e unidades",
+      "description": "Planilha final Samples_Metadata conciliada por Sample_ID com as 89 bibliotecas da matriz PIMBA. São somadas contagens brutas por New_Field_ID, mantendo campanha, ambiente e área consistentes. 87 bibliotecas com reads vegetais formam 40 unidades; duas bibliotecas sem reads vegetais permanecem na auditoria e no mapa. Transectos e evidência de replicação mantêm a proveniência anterior.",
+      "code": "publication/prepare_final_metadata.py; R/01_metadata.R; R/02_import.R"
+    },
+    {
+      "title": "Geoambientes e identificadores",
+      "description": "Oito categorias explícitas: AA, CBG, FLO, LAJ, MB, SAM, VRA, VRAB. SS = solo na seca; SC = solo na chuva. TC3 e TC8 recebem também VRA/FLO quando há ambientes distintos. A grafia dos IDs originais e o vínculo anterior são preservados na tabela de auditoria.",
+      "code": "publication/prepare_final_metadata.py"
+    },
+    {
+      "title": "Composição taxonômica e heatmaps",
+      "description": "Atribuições PIMBA em sete níveis. Apenas Plantae/Viridiplantae. Abundância relativa = contagem / soma da unidade × 100; agregações por área/ambiente são descritivas. Barras usam corte configurável auto, 1% ou 5%, com critério média entre barras (padrão) ou máximo. Auto escolhe 1% até 12 táxons e 5% acima disso; os demais são Outros (<1%) ou Outros (<5%). O agrupamento afeta somente a apresentação e sua soma pode exceder o limite individual. Heatmaps principais mostram os 16 táxons selecionados, matriz integral exportada. Cores das anotações são compartilhadas com mapas e filogenias.",
+      "code": "publication/itv_publication/data.py; publication/itv_publication/figures.py"
+    },
+    {
+      "title": "Presença e ausência de todos os táxons",
+      "description": "Matriz binária B(t,u)=1 se a soma de leituras brutas atribuídas ao táxon t na unidade u for maior que zero; B=0 em caso contrário. Inclui todas as categorias detectadas de Genus e Species, sem rarefação, Top N ou Outros. Frequência = unidades com detecção / unidades avaliadas. Nos grupos do atlas, aplica-se união (qualquer unidade positiva), sempre separando campanhas. Não detecção não demonstra ausência biológica. Esta visualização descritiva não produz novos p-valores.",
+      "code": "publication/itv_publication/presence.py; publication/nextjs/lib/presence.mjs; publication/nextjs/app/PresenceAbsence.js"
+    },
+    {
+      "title": "Rarefação e diversidade alfa",
+      "description": "Curvas de riqueza esperada; profundidade D selecionada pelo critério do config.R, sem elevar arbitrariamente a profundidade. Métricas: riqueza ASV, Chao1, Shannon e Simpson. Tabelas brutas completas, brutas restritas às unidades retidas e padronizadas. Monte Carlo: 64; seed 42. Conectores representam comparações efetivamente estimadas; losango = não estimável, nunca ns.",
+      "code": "R/04_rarefaction.R; R/05_alpha.R; publication/itv_publication/statistics.py"
+    },
+    {
+      "title": "Inferência alfa",
+      "description": "P: t pareado entre campanhas elegíveis; Welch t para dois grupos / ANOVA de Welch para múltiplos. NP primário: Wilcoxon pareado, Mann–Whitney ou Kruskal–Wallis. Mínimo 4 pares, 3 unidades independentes por grupo. Uma unidade por transecto/campanha na inferência espacial. BH sobre todas as métricas/contrastes de cada dataset e classe P/NP. Tabelas registram n, p, q, teste, exclusões, Shapiro/Levene e unidades usadas. Não se força significância.",
+      "code": "publication/itv_publication/statistics.py"
+    },
+    {
+      "title": "Diversidade beta",
+      "description": "Bray–Curtis sobre log1p(CPM); PCoA e NMDS. Jaccard binária calculada separadamente após padronização, média de 40 subamostragens. PERMANOVA, ANOSIM e PERMDISP; 999 permutações, restrições de desenho e QC. Distâncias têm testes e ajustes próprios. Elipses de dispersão só quando elegíveis; não representam confiança em um p-valor.",
+      "code": "R/06_beta.R; publication/R/beta_estatistica.R"
+    },
+    {
+      "title": "Abundância diferencial",
+      "description": "Order, Family, Genus e Species; filtros mínimos de 10 reads e prevalência 3. DESeq2: contagens brutas, size factors poscounts, desenho Condition ou PairID + Condition. ALDEx2: 128 instâncias Monte Carlo, denom all, testes/efeitos pareados quando pertinente. FDR <0,05; concordância entre métodos e direção do efeito explicitada. Exploração de quatro níveis não equivale a validação independente nem a correção conjunta entre ranks.",
+      "code": "R/07_contrasts.R; R/08_aldex2.R; R/09_deseq2.R; publication/itv_publication/concordance.py"
+    },
+    {
+      "title": "Filogenia ITS",
+      "description": "Alinhamento MAFFT, trimAl automated1 e FastTree; uma árvore com trimming e outra sem, usando o mesmo conjunto aprovado de sequências. Seleção de representantes é apenas visual. Ramos e nomes recebem cores únicas por família, paleta otimizada em CIEDE2000 e códigos F01…; anéis representam apenas metadados com cores idênticas aos heatmaps. Inferência por sequência, não por hierarquia taxonômica.",
+      "code": "publication/itv_publication/phylogeny.py; publication/itv_publication/phylogeny_pair.py; publication/itv_publication/family_colors.py"
+    },
+    {
+      "title": "Mapa e imagem de satélite",
+      "description": "Coordenadas da planilha final; conversão operacional EPSG:32722 para EPSG:4326 reproduz coordenadas anteriores, mas o datum não consta do XLSX. Imagem real Esri World Imagery, cache datado e atribuição; aquisição não informada. Escala corrigida pela latitude. Contexto IBGE/Natural Earth. Pontos coincidentes são preservados, sem jitter.",
+      "code": "publication/itv_publication/satellite.py; publication/itv_publication/map_real.py"
+    },
+    {
+      "title": "Comparação com literatura",
+      "description": "Busca dirigida em textos primários com Serra do Rabo/Bocaina no material examinado, vouchers e fonte vinculados. Quatro estudos e oito registros específicos na curadoria inicial. Comparação por presença de família/gênero/espécie, sem converter vouchers em abundância ITS ou atribuir registros antigos aos pontos TC. A não detecção molecular não é ausência ecológica. Registros regionais e candidatos automáticos permanecem separados.",
+      "code": "publication/itv_publication/local_literature.py; inputs/final/Referencias_Localidade.json"
+    },
+    {
+      "title": "Atlas e acesso",
+      "description": "React/Next.js com exportação estática no GitHub Pages da conta mattoslmp. Supabase Auth e Storage privado: dados e figuras são obtidos após autenticação/membership, via URLs temporárias. Filtros exploratórios não recalculam modelos estatísticos; os contrastes completos mantêm suas unidades originais.",
+      "code": "publication/nextjs/app/Atlas.js; publication/nextjs/lib/client.js"
+    }
+  ],
+  "references": [
+    {
+      "method": "DESeq2",
+      "citation": "Love, Huber & Anders (2014). Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biology 15:550.",
+      "url": "https://doi.org/10.1186/s13059-014-0550-8"
+    },
+    {
+      "method": "ALDEx2",
+      "citation": "Fernandes et al. (2014). Unifying the analysis of high-throughput sequencing datasets by compositional data analysis. Microbiome 2:15.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4030730/"
+    },
+    {
+      "method": "FDR",
+      "citation": "Benjamini & Hochberg (1995). Controlling the False Discovery Rate. JRSS B 57:289–300.",
+      "url": "https://doi.org/10.1111/j.2517-6161.1995.tb02031.x"
+    },
+    {
+      "method": "PERMANOVA",
+      "citation": "Anderson (2001). A new method for non-parametric multivariate analysis of variance. Austral Ecology 26:32–46.",
+      "url": "https://doi.org/10.1111/j.1442-9993.2001.01070.pp.x"
+    },
+    {
+      "method": "MAFFT",
+      "citation": "Katoh & Standley (2013). MAFFT Multiple Sequence Alignment Software Version 7. Molecular Biology and Evolution 30:772–780.",
+      "url": "https://doi.org/10.1093/molbev/mst010"
+    },
+    {
+      "method": "trimAl",
+      "citation": "Capella-Gutiérrez, Silla-Martínez & Gabaldón (2009). trimAl. Bioinformatics 25:1972–1973.",
+      "url": "https://doi.org/10.1093/bioinformatics/btp348"
+    },
+    {
+      "method": "FastTree",
+      "citation": "Price, Dehal & Arkin (2010). FastTree 2. PLOS ONE 5:e9490.",
+      "url": "https://doi.org/10.1371/journal.pone.0009490"
+    },
+    {
+      "method": "Satellite",
+      "citation": "Esri. World Imagery and terms for static maps; accessed 2026-11-05.",
+      "url": "https://doc.arcgis.com/en/arcgis-online/reference/static-maps.htm"
+    },
+    {
+      "method": "Presença/ausência e Jaccard",
+      "citation": "vegan development team. vegdist: Dissimilarity Indices for Community Ecologists. Documentação oficial.",
+      "url": "https://vegandevs.github.io/vegan/reference/vegdist.html"
+    },
+    {
+      "method": "Rarefação",
+      "citation": "Hurlbert SH (1971). The nonconcept of species diversity: a critique and alternative parameters. Ecology 52:577–586. Implementação e referências em vegan rarefy.",
+      "url": "https://vegandevs.github.io/vegan/reference/rarefy.html"
+    },
+    {
+      "method": "Diversidade alfa",
+      "citation": "vegan development team. diversity: Ecological Diversity Indices (Shannon, Simpson e riqueza). Documentação oficial e referências originais.",
+      "url": "https://vegandevs.github.io/vegan/reference/diversity.html"
+    },
+    {
+      "method": "Testes alfa paramétricos e não paramétricos",
+      "citation": "SciPy contributors. scipy.stats: t pareado, Welch, Wilcoxon, Mann–Whitney e Kruskal–Wallis. Documentação oficial das implementações.",
+      "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+    },
+    {
+      "method": "Ordenação e dispersão",
+      "citation": "vegan development team. metaMDS, wcmdscale, adonis2, anosim e betadisper. Documentação oficial de cada procedimento.",
+      "url": "https://vegandevs.github.io/vegan/reference/index.html"
+    }
+  ]
+}

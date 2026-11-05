@@ -21,3 +21,8 @@ O workflow `.github/workflows/pages.yml` publica automaticamente a `main`. O cam
 As credenciais publishable do Supabase são públicas por definição e não autorizam acesso aos dados privados. As políticas RLS e de Storage exigem um usuário autenticado e habilitado em `atlas_members`. Não adicionar dados científicos, senhas, JWTs administrativos, arquivos `.env` ou chaves `service_role` ao repositório.
 
 O pipeline científico e suas entregas anteriores permanecem preservados separadamente. Esta publicação reutiliza o mesmo backend e os mesmos resultados R4 validados.
+
+
+## Revisão presença/ausência e autores
+
+A aba Presença e ausência deriva contagens binárias da entrega autenticada, com todos os táxons, sete níveis, filtros de metadados, agrupamento por campanha e exportação CSV. Não usa corte percentual ou Top N. Teste: `node scripts/test-presence.mjs`. Autores são persistidos em `atlas_editorial`; RLS exige membro ativo para leitura e `can_edit_authors` para edição. Nomes, afiliações e ordem são editáveis no admin. Layout e logo: `public/brand/SOURCE.md`. Referências metodológicas completas: `lib/methods.json`.
