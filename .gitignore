@@ -3,3 +3,15 @@ node_modules/
 out/
 .env*
 *.log
+# Proteção: nunca versionar entregas e dados científicos privados
+/dados/
+/inputs/
+/ITV_ENTREGA_FINAL/
+/ITV_RESULTADOS_R5_*/
+*.rds
+*.fasta
+*.fastq
+*.fastq.gz
+.env
+.env.*
+!.env.example
