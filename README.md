@@ -26,3 +26,7 @@ O pipeline científico e suas entregas anteriores permanecem preservados separad
 ## Revisão presença/ausência e autores
 
 A aba Presença e ausência deriva contagens binárias da entrega autenticada, com todos os táxons, sete níveis, filtros de metadados, agrupamento por campanha e exportação CSV. Não usa corte percentual ou Top N. Teste: `node scripts/test-presence.mjs`. Autores são persistidos em `atlas_editorial`; RLS exige membro ativo para leitura e `can_edit_authors` para edição. Nomes, afiliações e ordem são editáveis no admin. Layout e logo: `public/brand/SOURCE.md`. Referências metodológicas completas: `lib/methods.json`.
+
+## Atualização de figuras locais — 06/11/2026
+
+A interface reconhece os novos heatmaps de família **somente quando uma entrega R5 validada for enviada ao bucket privado**. A geração local (13 figuras principais + 2 extras de família) e a sincronização autenticada estão descritas no [guia completo de atualização](docs/ATUALIZACAO_R5_20261106.md). O envio ao GitHub não deve incluir dados científicos privados.
