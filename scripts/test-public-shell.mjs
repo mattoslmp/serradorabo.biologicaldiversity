@@ -17,8 +17,9 @@ try{
  page.on('pageerror',e=>errors.push(e.message));
  page.on('response',r=>{if(r.url().startsWith('http://127.0.0.1:3100')&&r.status()>=400)errors.push(r.status()+' '+r.url());});
  await page.goto(site);
- await page.getByRole('textbox',{name:'Usuário',exact:true}).waitFor();
+ await page.getByRole('textbox',{name:'Usuário ou e-mail',exact:true}).waitFor();
  await page.getByRole('textbox',{name:'Senha',exact:true}).waitFor();
+ await page.getByRole('button',{name:'Primeiro acesso ou esqueci minha senha'}).waitFor();
  if(new URL(page.url()).pathname!==base+'/login/')throw Error('Unauthenticated route escaped project path');
  if(errors.length)throw Error(errors.join('; '));
  const geo=await fetch(site+'basemap-para.geojson');if(!geo.ok||(await geo.json()).features.length!==143)throw Error('Geography missing under project URL');
