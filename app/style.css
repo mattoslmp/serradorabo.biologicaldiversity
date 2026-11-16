@@ -16,3 +16,10 @@
 @media(max-width:700px){.topbar{padding:.8rem .9rem;gap:.75rem}.brand b{font-size:1.2rem}.top-right{width:100%;flex-wrap:wrap;gap:10px}.vale-logo{width:80px}.hero{display:block}.hero h1{font-size:2rem}.nav button{font-size:.85rem}.workspace{padding:1rem 3%}}
 
 .canga-login{display:block;min-height:100vh;padding:24px;max-width:1450px;margin:auto;background:#f6f8f7}.canga-login-header{display:flex;align-items:center;gap:24px;background:white;border:1px solid #DCE8E5;border-top:5px solid #007E7A;border-radius:15px;padding:20px 24px;box-shadow:0 6px 24px #00403a0f}.canga-login-header h1{font:700 1.55rem Arial,sans-serif;letter-spacing:0;color:#004F4C;margin:0 0 6px}.canga-login-header p{font-size:.9rem;color:#56666B;margin:0}.canga-login .login-form{max-width:490px;margin:45px auto;padding:32px;border:1px solid #DCE8E5;border-radius:15px;background:white;box-shadow:0 6px 24px #00403a0f}.canga-login .login-form h2{font-weight:700}.canga-login .login-form>p:last-child{margin:24px 0 0}@media(max-width:650px){.canga-login{padding:12px}.canga-login-header{gap:14px;padding:16px}.canga-login-header h1{font-size:1.15rem}.canga-login .login-form{margin:24px auto;padding:24px}}
+
+/* Recovery form and compact plot layout */
+.login-form form{display:grid;gap:14px}
+.login-link{display:block;margin:15px 0 0;padding:8px 0;border:0;background:transparent;color:var(--green);text-decoration:underline;font-size:12px}
+.login-link:hover{background:transparent;color:var(--dark)}
+.plot{width:100%;min-width:0}
+.plot .js-plotly-plot,.plot .plot-container{width:100%}
