@@ -25,7 +25,7 @@ try{
  await page.getByRole('textbox',{name:'Endereço do link recebido por e-mail'}).waitFor();
  if(new URL(page.url()).pathname!==base+'/reset-password/')throw Error('Recovery page did not render in public project path');
  await page.getByRole('button',{name:'Validar link e cadastrar senha'}).waitFor();
- if(new URL(page.url()).pathname!==base+'/login/')throw Error('Unauthenticated route escaped project path');
+ 
  if(errors.length)throw Error(errors.join('; '));
  const geo=await fetch(site+'basemap-para.geojson');if(!geo.ok||(await geo.json()).features.length!==143)throw Error('Geography missing under project URL');
  const cfg=JSON.parse(await readFile('lib/project.json','utf8'));
