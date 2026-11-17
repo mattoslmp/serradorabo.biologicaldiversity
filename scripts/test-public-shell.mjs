@@ -20,6 +20,7 @@ try{
  await page.getByRole('textbox',{name:'Usuário ou e-mail',exact:true}).waitFor();
  await page.getByRole('textbox',{name:'Senha',exact:true}).waitFor();
  await page.getByRole('button',{name:'Primeiro acesso ou esqueci minha senha'}).waitFor();
+ if(new URL(page.url()).pathname!==base+'/login/')throw Error('Unauthenticated route escaped project path');
  await page.getByRole('link',{name:'O link do e-mail abre localhost? Definir senha por outro método'}).click();
  await page.getByRole('textbox',{name:'Endereço do link recebido por e-mail'}).waitFor();
  if(new URL(page.url()).pathname!==base+'/reset-password/')throw Error('Recovery page did not render in public project path');
