@@ -9,7 +9,7 @@ export default function Login(){
     try{
       if(recover){
         await sendPasswordRecovery(f.get('email'));
-        N('Se a conta existir, um novo link será enviado. Caso o link ainda aponte para localhost, a configuração de URLs do Supabase precisa ser atualizada.');
+        N('Solicitação enviada. Se o e-mail apontar para localhost, não clique no botão: copie o endereço do link e use a recuperação alternativa abaixo.');
       } else {
         await signIn(f.get('username'),f.get('password'));
         location.assign(BASE+'/');
