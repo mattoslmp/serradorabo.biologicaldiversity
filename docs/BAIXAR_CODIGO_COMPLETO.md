@@ -50,3 +50,11 @@ A revisão gráfica corrigiu o espaçamento entre o título do eixo X e as legen
 ## Segurança
 
 O acesso público ao atlas continua desativado até aprovação e publicação de um conjunto de dados sanitizado. Não envie o ZIP científico nem suas entradas PIMBA ao repositório público.
+
+## Publicação automática dos resultados científicos
+
+A versão de 17/11/2026 do executor privado em `mattoslmp/ITV-rel1-2026` publica automaticamente após uma execução **real e validada**: a entrega científica completa vai para uma GitHub Release **privada**, os arquivos do atlas vão para o Supabase privado e o workflow GitHub Pages da interface é republicado e conferido. Não se enviam dados científicos privados a este repositório público.
+
+Guia: [Publicação automática R5](https://github.com/mattoslmp/ITV-rel1-2026/blob/main/documentacao/PUBLICACAO_AUTOMATICA_R5_20261117.md) (exige acesso ao repositório privado). Uma instalação local pode optar por `--offline-only`, sem upload. A recuperação do atlas online não depende de executar programas no computador do visitante.
+
+A versão científica remota só muda depois de nova análise validada e importada. O simples commit no GitHub não regenerará as figuras a partir de dados PIMBA que existem apenas no computador local.
