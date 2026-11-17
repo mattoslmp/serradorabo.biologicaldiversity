@@ -20,6 +20,10 @@ try{
  await page.getByRole('textbox',{name:'Usuário ou e-mail',exact:true}).waitFor();
  await page.getByRole('textbox',{name:'Senha',exact:true}).waitFor();
  await page.getByRole('button',{name:'Primeiro acesso ou esqueci minha senha'}).waitFor();
+ await page.getByRole('link',{name:'O link do e-mail abre localhost? Definir senha por outro método'}).click();
+ await page.getByRole('textbox',{name:'Endereço do link recebido por e-mail'}).waitFor();
+ if(new URL(page.url()).pathname!==base+'/reset-password/')throw Error('Recovery page did not render in public project path');
+ await page.getByRole('button',{name:'Validar link e cadastrar senha'}).waitFor();
  if(new URL(page.url()).pathname!==base+'/login/')throw Error('Unauthenticated route escaped project path');
  if(errors.length)throw Error(errors.join('; '));
  const geo=await fetch(site+'basemap-para.geojson');if(!geo.ok||(await geo.json()).features.length!==143)throw Error('Geography missing under project URL');
@@ -29,5 +33,5 @@ try{
   const r=await fetch(cfg.supabaseUrl+'/storage/v1/'+route+'/'+cfg.bucket+'/current.json',{headers});
   if(r.ok)throw Error('Anonymous access to private manifest was permitted');
  }
- console.log('PASS: project-path assets, login redirect, 143 public geographic boundaries, anonymous scientific storage denied.');
+ console.log('PASS: public login and local recovery fallback, 143 geographic boundaries, anonymous scientific storage denied.');
 }finally{await browser?.close();server.kill();if(base)await rm(root,{recursive:true,force:true});}
