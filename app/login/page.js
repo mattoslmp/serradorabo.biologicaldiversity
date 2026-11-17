@@ -30,7 +30,7 @@ export default function Login(){
         <button className="primary" disabled={busy}>{busy?'Processando…':recover?'Enviar link para definir senha':'Entrar no atlas →'}</button>
       </form>
       <button type="button" className="login-link" onClick={()=>{R(!recover);E('');N('')}}>{recover?'← Voltar ao login':'Primeiro acesso ou esqueci minha senha'}</button>
-      <p className="small muted">Instituto Tecnológico Vale (ITV)</p>
+      <p className="small"><a href={BASE+'/reset-password/'}>O link do e-mail abre localhost? Definir senha por outro método</a></p><p className="small muted">Instituto Tecnológico Vale (ITV)</p>
     </section>
   </main>;
 }
