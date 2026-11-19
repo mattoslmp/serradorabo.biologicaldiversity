@@ -4,6 +4,12 @@
 
 Atlas interativo de comunidades vegetais ITS, em React e Next.js. Publicado no GitHub Pages da conta **mattoslmp**. Instituto Tecnológico Vale · Leandro de Mattos Pereira, PhD.
 
+## Manual científico integral — R5
+
+O **README canônico do pipeline R5** foi revisado em 19/11/2026, no repositório científico privado [mattoslmp/ITV-rel1-2026/README.md](https://github.com/mattoslmp/ITV-rel1-2026/blob/main/README.md). Ele documenta **cada etapa (input → métodos → outputs → figuras)**, ambiente Ubuntu/WSL, linguagens e bibliotecas, **as 13 figuras com eixos, símbolos e legendas**, estatística, filogenia MAFFT/trimAl/FastTree e referências bibliográficas.
+
+**Execução local atual:** `bash executar_itv.sh "$P" --threads 4 --dpi 300 --taxon-cutoff 1 --taxon-cutoff-basis max --install-r --publish-online`, após instalar/configurar e passar `bash scripts/publicar_online.sh --preflight`. **Publicação privada é padrão**, e `--offline-only` é opção. O repositório científico exige autorização GitHub; não inclua dados sensíveis aqui.
+
 Este repositório contém a interface e a malha municipal pública IBGE/Geodata BR. Dados, coordenadas amostrais, resultados, figuras e árvores são recuperados do armazenamento privado do Supabase após autenticação e verificação de associação. Nenhuma senha ou chave administrativa é necessária para compilar ou publicar a interface.
 
 O atlas oferece mapa, taxonomia, heatmaps, diversidade alfa e beta, abundância diferencial, filogenia, interseções, literatura e downloads. A entrega científica ativa é identificada pelo manifesto privado `current.json`.
@@ -20,7 +26,7 @@ O workflow `.github/workflows/pages.yml` publica automaticamente a `main`. O cam
 
 As credenciais publishable do Supabase são públicas por definição e não autorizam acesso aos dados privados. As políticas RLS e de Storage exigem um usuário autenticado e habilitado em `atlas_members`. Não adicionar dados científicos, senhas, JWTs administrativos, arquivos `.env` ou chaves `service_role` ao repositório.
 
-O pipeline científico e suas entregas anteriores permanecem preservados separadamente. Esta publicação reutiliza o mesmo backend e os mesmos resultados R4 validados.
+O pipeline científico e suas entregas anteriores permanecem preservados separadamente. A interface lê o ponteiro privado `current.json` do Supabase e pode exibir releases R4/R5 conforme a última **publicação científica efetivamente validada e ativada**; a atualização de código e README, isoladamente, não altera a release remota.
 
 
 ## Revisão presença/ausência e autores
