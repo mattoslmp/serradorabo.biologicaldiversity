@@ -36,3 +36,9 @@ A aba Presença e ausência deriva contagens binárias da entrega autenticada, c
 ## Atualização de figuras locais — 06/11/2026
 
 A interface reconhece os novos heatmaps de família **somente quando uma entrega R5 validada for enviada ao bucket privado**. A geração local (13 figuras principais + 2 extras de família) e a sincronização autenticada estão descritas no [guia completo de atualização](docs/ATUALIZACAO_R5_20261106.md). O envio ao GitHub não deve incluir dados científicos privados.
+
+## Comparação florística por estação
+
+A aba de inventário florístico apresenta os registros de campo e as atribuições do ITS por família, gênero e espécie. Os diagramas de Venn comparam os métodos dentro de cada estação e a seca e a chuva dentro de cada método. O painel de abundância distingue a proporção de leituras por unidade de solo, a contagem de indivíduos e a cobertura de herbáceas. As tabelas da entrega privada incluem esforço amostral, incidência, táxons compartilhados e a rastreabilidade dos registros datados.
+
+O [repositório científico de mattoslmp](https://github.com/mattoslmp/ITV-rel1-2026) contém os insumos, as rotinas de análise e o README de reprodução local e publicação. As figuras e tabelas desta aba são carregadas do manifesto da entrega ativa após autenticação.
