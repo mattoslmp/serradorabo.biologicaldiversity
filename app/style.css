@@ -23,3 +23,6 @@
 .login-link:hover{background:transparent;color:var(--dark)}
 .plot{width:100%;min-width:0}
 .plot .js-plotly-plot,.plot .plot-container{width:100%}
+
+/* Legends remain outside plot drawing regions. */
+.compact-legend{margin:4px 0 12px;gap:6px 14px;align-items:flex-start;line-height:1.35}.compact-legend span{max-width:100%;overflow-wrap:anywhere}.chart-evidence{margin:12px 0 20px;padding:12px 16px;border:1px solid var(--line,#dce6de);border-radius:8px;background:#f8faf8;font-size:13px;line-height:1.55}.chart-evidence h4{margin:0 0 6px;font-size:14px}.chart-evidence p{margin:6px 0}.chart-evidence dl{display:grid;grid-template-columns:minmax(115px,auto) minmax(0,1fr);column-gap:14px;row-gap:5px;margin:10px 0}.chart-evidence dt{font-weight:650}.chart-evidence dd{margin:0;overflow-wrap:anywhere}.chart-evidence code{overflow-wrap:anywhere}.compact-taxonomy-panels section{margin:8px 0 14px}.compact-taxonomy-panels h3,.compact-taxonomy-panels h4{margin:6px 0}.compact-taxonomy-panels .plot{margin-bottom:0}.treebox svg g[role="button"]:focus{outline:none}.treebox svg g[role="button"]:focus text{font-weight:bold;text-decoration:underline}@media(max-width:640px){.chart-evidence dl{grid-template-columns:1fr;row-gap:3px}.chart-evidence dd{margin-bottom:6px}}
