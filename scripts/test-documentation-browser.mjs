@@ -63,7 +63,7 @@ try{
  const s=await doc('concordancia_por_escala.csv'),t=await doc('taxons_filtrados.csv');
  assert.match(await s.innerText(),/Total de unidades de campo ITS avaliadas/);
  assert.match(await t.innerText(),/Quantidade de unidades New_Field_ID com pelo menos uma leitura/);
- assert.equal(await page.getByRole('link',{name:'Fonte oficial WCVP v16 (Kew, 2026)',exact:true}).first().getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');
+ assert.equal(await page.getByRole('link',{name:'WCVP v16 — repositório oficial de Kew',exact:true}).first().getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');
  await page.getByTestId('plateau-venn').waitFor();assert.equal(await page.getByRole('heading',{name:'Prancha teste 16',exact:true}).count(),0);
  assert.equal(await page.locator('figure').filter({has:page.getByRole('heading',{name:'Comando de reprodução',exact:true})}).count(),7);
  await tab('Interseções');await doc('intersecoes_exatas.csv');await page.getByRole('cell',{name:'Exclusivo no recorte',exact:true}).first().waitFor();
