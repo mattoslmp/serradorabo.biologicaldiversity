@@ -22,7 +22,7 @@ export default function Floristica({comparison, Table}) {
     <Table key={[names,level,evidence].join('/')} rows={rows} name="taxons_filtrados.csv"/><div className="chart-evidence"><h4>Colunas da lista de táxons</h4><p><b>Tratamento</b>: regra nomenclatural; <b>Escala</b>: Regional; <b>Grupo</b>: Serra do Rabo; <b>Nivel</b>: nível taxonômico; <b>Taxon</b>: nome atribuído; <b>Evidencia</b>: compartilhado, somente ITS ou somente campo; <b>Unidades_ITS</b>: unidades com pelo menos uma leitura; <b>Leituras_ITS</b>: soma de leituras; <b>ASVs_ITS</b>: variantes atribuídas; <b>Registros_campo</b>: entradas do inventário associadas ao nome, não número de indivíduos. Zero indica ausência de registro nesse conjunto, não ausência biológica.</p></div>
     {comparison.figuras.map(figure=><figure key={figure.id}>
       <h3>{figure.title}</h3><img loading="lazy" style={{maxWidth:'100%',height:'auto'}} src={fileURL(figure.files.png)} alt={figure.title}/>
-      <figcaption>{figure.caption}</figcaption><FloristicEvidence figure={figure}/>
+      <figcaption>{figure.caption}</figcaption><FloristicEvidence figure={figure} comparison={comparison}/>
       <p>{Object.entries(figure.files).map(([format,path])=><a key={path} href={fileURL(path)} target="_blank" rel="noreferrer" style={{marginRight:'1rem'}}>{format.toUpperCase()}</a>)}</p>
     </figure>)}
     <h3>Relatório e dados completos</h3>
