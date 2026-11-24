@@ -49,7 +49,7 @@ try{
    await doc(name);
    assert.ok(await overlap.evaluate((el,n)=>Boolean(document.querySelector('[data-table-documentation="'+n+'"]').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING),name), 'Regional comparison must be below '+name);
  }
- assert.ok(await overlap.evaluate(el=>Boolean(el.compareDocumentPosition(el.nextElementSibling)&Node.DOCUMENT_POSITION_FOLLOWING)&&el.nextElementSibling?.tagName==='FIGURE'),'Regional comparison must precede the floristic figures');
+ assert.ok(await overlap.evaluate(el=>Boolean(el.compareDocumentPosition(el.nextElementSibling)&Node.DOCUMENT_POSITION_FOLLOWING)&&el.nextElementSibling?.dataset.testid==='plateau-venn'),'Regional comparison must precede the floristic figures');
  for(const [level,a,b,d] of [['Família',2,3,'+1'],['Gênero',4,4,'0'],['Espécie',6,8,'+2']]){
   const row=table.locator('tbody tr').filter({has:page.getByRole('rowheader',{name:level,exact:true})});
   await row.waitFor({state:'visible'});
@@ -64,10 +64,8 @@ try{
  assert.match(await s.innerText(),/Total de unidades de campo ITS avaliadas/);
  assert.match(await t.innerText(),/Quantidade de unidades New_Field_ID com pelo menos uma leitura/);
  assert.equal(await page.getByRole('link',{name:'Fonte oficial WCVP v16 (Kew, 2026)',exact:true}).first().getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');
- const spatial=page.locator('figure').filter({has:page.getByRole('heading',{name:'Prancha teste 16',exact:true})});
- await spatial.getByRole('heading',{name:'O que é platô? O que é geofácies?'}).waitFor();
- assert.match(await spatial.innerText(),/Platô S01/);
- assert.equal(await page.locator('figure').filter({has:page.getByRole('heading',{name:'Comando de reprodução',exact:true})}).count(),8);
+ await page.getByTestId('plateau-venn').waitFor();assert.equal(await page.getByRole('heading',{name:'Prancha teste 16',exact:true}).count(),0);
+ assert.equal(await page.locator('figure').filter({has:page.getByRole('heading',{name:'Comando de reprodução',exact:true})}).count(),7);
  await tab('Interseções');await doc('intersecoes_exatas.csv');await page.getByRole('cell',{name:'Exclusivo no recorte',exact:true}).first().waitFor();
  await page.getByLabel('Área amostral',{exact:true}).selectOption('S01A');
  await page.getByRole('cell',{name:'Grupo único — sem comparação',exact:true}).first().waitFor();
@@ -82,5 +80,5 @@ try{
  await tab('Materiais e métodos');await page.getByRole('heading',{name:'Materiais e métodos — protocolo científico completo'}).waitFor();await page.getByTestId('regional-overlap').getByTestId('overlap-table').waitFor({state:'visible'});await page.getByRole('heading',{name:'4. Fichas metodológicas de todas as figuras disponíveis'}).waitFor();await page.getByRole('button',{name:'Expandir todas as fichas'}).click();await page.locator('.method-figure').filter({hasText:'Figura18_fixture'}).first().waitFor();await tab('Figuras');await page.getByRole('button',{name:/Prancha alfa teste/}).click();await page.getByRole('heading',{name:'Comando de reprodução'}).waitFor();
  await tab('Tabelas');await doc('Alfa_testes.csv');await page.getByText('Valor p ajustado por Benjamini–Hochberg, para a família de testes definida no método.',{exact:true}).waitFor();
  assert.deepEqual(errors,[]);
- console.log('PASS: documentation below all exercised tables, eight floristic figures, WCVP/plateau sources, two intersection scenarios, and static figure documentation (synthetic browser fixture only).');
+ console.log('PASS: documentation below all exercised tables, seven historical floristic figures (spatial heatmap removed), WCVP/plateau sources, two intersection scenarios, and static figure documentation (synthetic browser fixture only).');
 }finally{await browser?.close();server.kill();if(base)await rm(root,{recursive:true,force:true});}

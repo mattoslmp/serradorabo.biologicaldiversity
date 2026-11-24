@@ -1,4 +1,5 @@
 'use client';
+import {IdentityLegend} from './IdentityReview';
 import {regionalOverlap} from '../lib/atlasReview.mjs';
 import {fileURL} from '../lib/client';
 import {SCI,WCVP,WCVP_GBIF,WCVP_PORTAL,REPRO} from '../lib/tableDocumentation.mjs';
@@ -45,10 +46,10 @@ export default function RegionalOverlap({comparison}){
  {rows.map(r=><div key={r.Nivel} className="overlap-pair"><b>{r.Nivel==='Família'?'Famílias':r.Nivel==='Gênero'?'Gêneros':'Espécies'}</b>{[['Original',r.Original,'original'],['WCVP v16',r.WCVP_v16,'wcvp']].map(([label,n,key])=><div key={key} className="overlap-bar-row" data-level={r.Nivel} data-treatment={label} aria-label={r.Nivel+' — '+label+': '+fmt(n)}><div className="overlap-track"><div className={'overlap-bar '+key} style={{width:((n??0)/maximum*100)+'%'}}/></div><strong className="overlap-count">{fmt(n)}</strong></div>)}</div>)}
  <div className="overlap-axis" aria-hidden="true"><span>0</span><span>{maximum}</span></div>
  </div>
- <div data-testid="overlap-chart-explanation"><Definition rows={rows}/><Provenance type="chart"/></div>
+ <div data-testid="overlap-chart-explanation"><IdentityLegend comparison={comparison}/>{comparison.identity_policy?<p>Original: nomes registrados; WCVP v16: World Checklist of Vascular Plants, nomenclatura harmonizada pelo Kew. Comparam-se táxons elegíveis por identidade, não novas detecções. <a href={WCVP}>Fonte oficial</a>.</p>:<><Definition rows={rows}/><Provenance type="chart"/></>}</div>
  <h4>Comparação numérica — Original e WCVP v16</h4>
  <div className="scrolltable"><table className="overlap-table" data-testid="overlap-table"><caption>Táxons compartilhados por nível taxonômico (escala regional)</caption><thead><tr><th scope="col">Nível taxonômico</th><th scope="col">Original</th><th scope="col">WCVP v16</th><th scope="col">Diferença</th></tr></thead><tbody>{rows.map(r=><tr key={r.Nivel}><th scope="row">{r.Nivel}</th><td>{fmt(r.Original)}</td><td>{fmt(r.WCVP_v16)}</td><td>{delta(r.Diferenca)}</td></tr>)}</tbody></table></div>
- <div data-testid="overlap-table-explanation"><p><b>Significado das colunas:</b> Nível taxonômico = família, gênero ou espécie; Original = quantidade compartilhada antes da conciliação; WCVP v16 = quantidade compartilhada após conciliar nomes; Diferença = segundo valor menos o primeiro. Os três níveis são hierárquicos e não devem ser somados.</p><Definition rows={rows}/><Provenance type="table"/></div>
+ <div data-testid="overlap-table-explanation"><p><b>Significado das colunas:</b> Nível taxonômico = família, gênero ou espécie; Original = quantidade compartilhada antes da conciliação; WCVP v16 = quantidade compartilhada após conciliar nomes; Diferença = segundo valor menos o primeiro. Os três níveis são hierárquicos e não devem ser somados.</p><IdentityLegend comparison={comparison}/>{comparison.identity_policy?<p>WCVP v16 — World Checklist of Vascular Plants, referência de nomes aceitos e sinônimos. <a href={WCVP}>Fonte oficial</a>. Exemplo nomenclatural: <i>Camptosema ellipticum</i> → <i>Cerradicola elliptica</i>. <a href="https://github.com/mattoslmp/serradorabo.biologicaldiversity/blob/main/lib/identityAudit.mjs">Script de cálculo</a>; dados completos nas tabelas acima, metodologia na aba Materiais e métodos.</p>:<><Definition rows={rows}/><Provenance type="table"/></>}</div>
  <button type="button" onClick={save} disabled={rows.every(r=>r.Original===null&&r.WCVP_v16===null)}>↓ Exportar CSV da comparação</button>
  </section>;
 }

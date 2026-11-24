@@ -1,10 +1,11 @@
 'use client';
 import {useState,useMemo} from 'react';
 import {presenceMatrix,presenceCSV} from '../lib/presence.mjs';
+import {namedMatrix} from '../lib/identityAudit.mjs';
 import TableDocumentation from './TableDocumentation';
 export default function PresenceAbsence({data,selected,rank,view,search}){
  const [minUnits,Min]=useState(1),[sort,Sort]=useState('occupancy');
- const matrix=useMemo(()=>presenceMatrix(data.taxonomy[rank],selected,{view,search,minUnits,sort}),[data,selected,rank,view,search,minUnits,sort]);
+ const matrix=useMemo(()=>presenceMatrix(data.identity_review?.status==='verified'?namedMatrix(data.taxonomy[rank]):data.taxonomy[rank],selected,{view,search,minUnits,sort}),[data,selected,rank,view,search,minUnits,sort]);
  const save=()=>{const u=URL.createObjectURL(new Blob([presenceCSV(matrix)],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download=`presenca_ausencia_${rank}_${view}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
  return <section><div className="controls"><label>Mínimo de unidades com detecção<input type="number" min="1" max={Math.max(1,selected.length)} value={minUnits} onChange={e=>Min(e.target.value)}/></label><label>Ordenar táxons<select value={sort} onChange={e=>Sort(e.target.value)}><option value="occupancy">Frequência de detecção</option><option value="name">Nome</option></select></label><button onClick={save} disabled={!matrix.rows.length}>↓ Matriz binária CSV</button><button onClick={()=>{Min(1);Sort('occupancy')}}>Todas as detecções do recorte</button></div>
  <p><b>{matrix.rows.length} categorias taxonômicas · {matrix.units} unidades · {matrix.keys.length} colunas.</b> Todos os táxons detectados são incluídos por padrão; sem Top N, corte percentual ou categoria Outros.</p>

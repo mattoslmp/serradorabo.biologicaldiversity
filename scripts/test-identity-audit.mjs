@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {identityReview,groupIdentity,identityHover,reviewFloristica,plateauPatterns,occupancy,mergedRows,namedMatrix} from '../lib/identityAudit.mjs';
+const names=['a','b','c','d'],units=['u1','u2','u3'],taxonomy=Object.fromEntries(names.map((id,i)=>[id,{Family:'Fabaceae',Genus:i<3?'Genusa':'Genusb',Species:''}]));
+for(const id of names)taxonomy[id].Species=taxonomy[id].Genus+' '+({a:'alba',b:'beta',c:'cana',d:'delta'}[id]);
+const data={manifest:{},taxonomy:{},asv_taxonomy:taxonomy,asv_counts:{asvs:names,units,counts:[[2,3,4,5],[0,2,1,0],[0,0,7,2]]},metadata:units.map((u,i)=>({New_Field_ID:u,Sample_Area:'S'+(i+1)+'A',Estacao:'Seca'}))};
+const r=identityReview(data,{a:90,b:95,c:98,d:100});
+assert.deepEqual(r.identity_review.summary.map(x=>x.ASVs_atribuidas),[4,3,2]);
+for(const rank of ['Family','Genus','Species'])assert.deepEqual(r.taxonomy[rank].counts.map(a=>a.reduce((x,y)=>x+y,0)),[14,3,9]);
+assert.equal(namedMatrix(r.taxonomy.Species).taxa.length,2);
+const h=groupIdentity(r,r.metadata,'New_Field_ID','Species');assert.match(identityHover(h,'u1','Genusa cana'),/98.000/);
+assert.equal(mergedRows(r,r.metadata,'Species','New_Field_ID').find(x=>x.ASV==='a').Identidade_pct,90);
+const w=names.map(id=>({...taxonomy[id],Family_WCVP:taxonomy[id].Family,Genus_WCVP:taxonomy[id].Genus,Species_WCVP:taxonomy[id].Species}));
+const old={resumo:['Original','WCVP v16'].flatMap(Tratamento=>['Família','Gênero','Espécie'].flatMap(Nivel=>[{Tratamento,Escala:'Regional',Grupo:'R',Nivel,Campo:1,Unidades_ITS:3},...['S1','S2','S3'].map(Grupo=>({Tratamento,Escala:'Platô',Grupo,Nivel,Campo:1,Unidades_ITS:1}))]))};
+const detail=old.resumo.map(x=>({...x,Taxon:{'Família':'Fabaceae','Gênero':'Genusa','Espécie':'Genusa cana'}[x.Nivel],Registros_campo:1}));
+const f=reviewFloristica(r,old,detail,w);assert.equal(f.resumo.find(x=>x.Nivel==='Espécie'&&x.Escala==='Regional').ITS,2);assert.equal(plateauPatterns(f,'Original','Espécie').patterns.find(x=>x.mask===7).N,1);assert.equal(occupancy(f,'Original').find(x=>x.Nivel==='Espécie'&&x.Min_unidades===3).Comuns,1);
+assert.throws(()=>identityReview(data,{a:90,b:95,c:98}));assert.throws(()=>reviewFloristica(r,old,detail,w.slice(0,3)));
+console.log('PASS: hierarchical identity cutoffs, read conservation, ASV identity, WCVP recalculation, Venn, occupancy, fail-closed source checks.');
