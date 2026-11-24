@@ -7,7 +7,7 @@ assert.match(columnDefinition('taxons_filtrados.csv','Unidades_ITS'),/pelo menos
 assert.match(columnDefinition('Presenca_Ausencia_Species_COMPLETA.csv','unit-01'),/1 detectado/);
 assert.match(columnDefinition('Taxonomia_Family_New_Field_ID_EXIBIDA.csv','Example taxon'),/percentual/);
 assert.match(tableDoc('intersecoes_exatas.csv').meaning,/não é possível avaliar exclusividade/);
-assert.match(WCVP,/10\.34885/);assert.match(REPRO,/reproduzir_sazonal/);
+assert.match(WCVP,/kew\.iro\.bl\.uk/);assert.match(REPRO,/reproduzir_sazonal/);
 assert.equal(tableDoc('unverified.csv').kind,null);assert.match(columnDefinition('unverified.csv','unknown'),/não documentada/);
 for(const col of ['Tratamento','Escala','Grupo','Nivel','ITS','Campo','Comuns','So_ITS','So_campo','Uniao','Jaccard','Sorensen','Unidades_ITS','Taxon','Evidencia','Leituras_ITS','ASVs_ITS','Registros_campo','Grupos','Numero_grupos','N','Interpretacao','Grupos_sem_deteccao','Taxa','Rank','View','Group','Season','Study_Reads','Study_Detected','Literature_Confirmed','Literature_Evidence'])assert.ok(TABLE_FIELDS[col],col);
 console.log('Table documentation schema verified');

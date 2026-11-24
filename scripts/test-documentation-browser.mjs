@@ -44,7 +44,7 @@ try{
  const s=await doc('concordancia_por_escala.csv'),t=await doc('taxons_filtrados.csv');
  assert.match(await s.innerText(),/Total de unidades de campo ITS avaliadas/);
  assert.match(await t.innerText(),/Quantidade de unidades New_Field_ID com pelo menos uma leitura/);
- assert.equal(await page.getByRole('link',{name:'Fonte oficial WCVP v16 (Kew, 2026)',exact:true}).first().getAttribute('href'),'https://doi.org/10.34885/egs6-cp24');
+ assert.equal(await page.getByRole('link',{name:'Fonte oficial WCVP v16 (Kew, 2026)',exact:true}).first().getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');
  const spatial=page.locator('figure').filter({has:page.getByRole('heading',{name:'Prancha teste 16',exact:true})});
  await spatial.getByRole('heading',{name:'O que é platô? O que é geofácies?'}).waitFor();
  assert.match(await spatial.innerText(),/Platô S01/);
@@ -60,7 +60,7 @@ try{
  await tab('Filogenia');await doc('filogenia_metadados_taxonomia.csv');
  await tab('Presença e ausência');await doc('Presenca_Ausencia_Genus_COMPLETA.csv');
  await tab('Literatura');const l=await doc('literatura_comparacao.csv');assert.match(await l.innerText(),/detectado no nosso ITS/);await doc('literatura_serra_do_rabo_ITS.csv');await doc('literatura_fontes.csv');
- await tab('Figuras');await page.getByRole('button',{name:/Prancha alfa teste/}).click();await page.getByRole('heading',{name:'Comando de reprodução'}).waitFor();
+ await tab('Materiais e métodos');await page.getByRole('heading',{name:'Materiais e métodos — protocolo científico completo'}).waitFor();await page.getByRole('heading',{name:'4. Fichas metodológicas de todas as figuras disponíveis'}).waitFor();await page.getByRole('button',{name:'Expandir todas as fichas'}).click();await page.locator('.method-figure').filter({hasText:'Figura18_fixture'}).first().waitFor();await tab('Figuras');await page.getByRole('button',{name:/Prancha alfa teste/}).click();await page.getByRole('heading',{name:'Comando de reprodução'}).waitFor();
  await tab('Tabelas');await doc('Alfa_testes.csv');await page.getByText('Valor p ajustado por Benjamini–Hochberg, para a família de testes definida no método.',{exact:true}).waitFor();
  assert.deepEqual(errors,[]);
  console.log('PASS: documentation below all exercised tables, eight floristic figures, WCVP/plateau sources, two intersection scenarios, and static figure documentation (synthetic browser fixture only).');
