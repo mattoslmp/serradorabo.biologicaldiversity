@@ -1,11 +1,12 @@
 'use client';
 import {fileURL} from '../lib/client';
+import {AnalysisEvidence} from './Evidence';
 import {groupLocations,colorSegments,satelliteProjection,countryPath,centerOfLocations} from '../lib/mapGeometry.mjs';
 
 const brazilProject=(lon,lat)=>[20+(lon+75)*6.2,40+(6-lat)*6.2];
 export function BrazilLocator({rows,outline,satellite,onFocus}){
  const sites=groupLocations(rows),center=centerOfLocations(sites,satellite),p=center?brazilProject(...center):null;
- return <aside className="brazil-locator"><h3>Brasil</h3><svg viewBox="0 0 300 320" role="img" aria-label="Mapa do Brasil com a localização da Serra do Rabo, no Pará"><path d={countryPath(outline,brazilProject)} fill="#e2eee5" stroke="#48756a" strokeWidth="1.3" fillRule="evenodd"/>{p&&<g><circle cx={p[0]} cy={p[1]} r="12" fill="#d45232" fillOpacity=".14"/><circle cx={p[0]} cy={p[1]} r="4.5" fill="#bd482c" stroke="white" strokeWidth="1.5"/><path d={`M${p[0]+6},${p[1]} L275,${p[1]} L275,300`} fill="none" stroke="#bd482c" strokeDasharray="4 3"/><text x="20" y="300" fontSize="14" fontWeight="700" fill="#004f4c">Serra do Rabo · Pará</text></g>}</svg><button type="button" onClick={onFocus}>Ampliar locais de coleta →</button><p>Contorno: Natural Earth. Posição calculada com os metadados finais.</p></aside>;
+ return <aside className="brazil-locator"><h3>Brasil</h3><svg viewBox="0 0 300 320" role="img" aria-label="Mapa do Brasil com a localização da Serra do Rabo, no Pará"><path d={countryPath(outline,brazilProject)} fill="#e2eee5" stroke="#48756a" strokeWidth="1.3" fillRule="evenodd"/>{p&&<g><circle cx={p[0]} cy={p[1]} r="12" fill="#d45232" fillOpacity=".14"/><circle cx={p[0]} cy={p[1]} r="4.5" fill="#bd482c" stroke="white" strokeWidth="1.5"/><path d={`M${p[0]+6},${p[1]} L275,${p[1]} L275,300`} fill="none" stroke="#bd482c" strokeDasharray="4 3"/><text x="20" y="300" fontSize="14" fontWeight="700" fill="#004f4c">Serra do Rabo · Pará</text></g>}</svg><button type="button" onClick={onFocus}>Ampliar locais de coleta →</button><p>Contorno: Natural Earth. Posição calculada com os metadados finais.</p><details><summary>Fonte, método e reprodução do mapa</summary><AnalysisEvidence kind="map"/></details></aside>;
 }
 
 export default function MapOverview({rows,outline,satellite,palettes,onOpen}){
@@ -18,5 +19,5 @@ export default function MapOverview({rows,outline,satellite,palettes,onOpen}){
  {c&&<path d={`M${c[0]+22},${c[1]+45} L${b.x},${b.y} M${c[0]+22},${c[1]+55} L${b.x},${b.y+b.height}`} fill="none" stroke="#007e7a" strokeWidth="1.5" strokeDasharray="6 5"/>}
  <image href={fileURL(satellite.path)} x={b.x} y={b.y} width={b.width} height={b.height} preserveAspectRatio="none"/>
  {sites.map(site=>{const [x,y]=project.point(site.lon,site.lat),segments=colorSegments(site,'Estacao',palettes.Estacao),colors=[...new Set(segments.map(s=>s.color))];return <g key={site.key} className="overview-sampling-point"><title>{[...new Set(site.rows.map(r=>r.New_Field_ID))].join(', ')} · {site.rows.length} bibliotecas</title><circle cx={x} cy={y} r="6" fill={colors[0]} stroke="white" strokeWidth="2"/>{colors.length>1&&<path d={`M${x},${y-5} A5,5 0 0 1 ${x},${y+5} Z`} fill={colors[1]}/>}</g>})}
- <text x="405" y="480" fontSize="14" fill="#34594c">{sites.length} posições · clique para explorar</text></svg></button><figcaption>Coordenadas da planilha final · pontos sem deslocamento.<br/>Satélite © Esri e licenciadores. Brasil: Natural Earth.</figcaption></figure>;
+ <text x="405" y="480" fontSize="14" fill="#34594c">{sites.length} posições · clique para explorar</text></svg></button><figcaption>Coordenadas da planilha final · pontos sem deslocamento.<br/>Satélite © Esri e licenciadores. Brasil: Natural Earth.</figcaption><details><summary>Descrição, método, dados e comando de reprodução</summary><AnalysisEvidence kind="map"/></details></figure>;
 }

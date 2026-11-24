@@ -1,6 +1,7 @@
 'use client';
 import {useState,useMemo} from 'react';
 import {presenceMatrix,presenceCSV} from '../lib/presence.mjs';
+import TableDocumentation from './TableDocumentation';
 export default function PresenceAbsence({data,selected,rank,view,search}){
  const [minUnits,Min]=useState(1),[sort,Sort]=useState('occupancy');
  const matrix=useMemo(()=>presenceMatrix(data.taxonomy[rank],selected,{view,search,minUnits,sort}),[data,selected,rank,view,search,minUnits,sort]);
@@ -11,5 +12,6 @@ export default function PresenceAbsence({data,selected,rank,view,search}){
  <p className="small">Presença = ao menos uma leitura atribuída ao táxon na unidade. Em área ou geoambiente: presença em pelo menos uma unidade do grupo, separando as campanhas. Passe o cursor ou use Tab para ver leituras e unidades com detecção. Profundidade e PCR afetam a detecção; 0 não comprova ausência biológica. Espécies são atribuições taxonômicas.</p>
  {!matrix.rows.length?<p role="status">Nenhum táxon atende aos filtros atuais.</p>:<div className="presence-scroll"><table className="presence-table"><caption>Presença e ausência · {rank} · {view}</caption><thead><tr><th>Táxon</th>{matrix.keys.map(k=><th key={k}><span>{k}</span></th>)}<th>Detecção</th></tr>{['Estacao','Sample_Area','Geoambiente'].map((field,i)=><tr key={field}><th>{['Campanha','Área','Geoambiente'][i]}</th>{matrix.keys.map(k=>{const vals=[...new Set(selected.filter(m=>(view==='New_Field_ID'?m.New_Field_ID:m.Estacao+' | '+m[view])===k).map(m=>m[field]))];const color=vals.length===1?data.palettes[field]?.[vals[0]]:'#7B8189';return <td key={k} style={{background:color}} title={vals.join(', ')} aria-label={vals.join(', ')} />})}<td/></tr>)}</thead><tbody>{matrix.rows.map(row=><tr key={row.name}><th scope="row">{row.name}</th>{row.cells.map((c,i)=><td key={matrix.keys[i]} style={{background:c.value?'#007E7A':'#EDF0EF'}}><span tabIndex={0} aria-label={`${row.name}; ${matrix.keys[i]}; ${c.value?'presença':'não detectado'}; ${c.detected}/${c.total} unidades; ${c.reads} leituras`} title={`${matrix.keys[i]}\n${row.name}\n${c.reads} leituras · ${c.detected}/${c.total} unidades`}>{c.value}</span></td>)}<td className="occupancy">{row.occupied}/{matrix.units}</td></tr>)}</tbody></table></div>}
  <details><summary>Legenda dos metadados</summary><div className="legend">{['Estacao','Sample_Area','Geoambiente'].map(field=><div key={field}><b>{field}</b>{Object.entries(data.palettes[field]||{}).map(([k,v])=><span key={k}><i style={{background:v}}/>{k}</span>)}</div>)}</div></details>
+ <TableDocumentation name={'Presenca_Ausencia_'+rank+'_COMPLETA.csv'} columns={['Taxon',...matrix.keys,'Detecção']}/>
  </section>;
 }

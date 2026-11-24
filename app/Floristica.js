@@ -3,8 +3,9 @@
 import {useState} from 'react';
 import {fileURL} from '../lib/client';
 import {FloristicEvidence} from './Evidence';
+import {WcvpExplanation,PlateauExplanation} from './TableDocumentation';
 
-export default function Floristica({comparison, Table}) {
+export default function Floristica({comparison, Table, metadata=[]}) {
   const [names,setNames]=useState('WCVP v16');
   const [scope,setScope]=useState('Regional');
   const [level,setLevel]=useState('Espécie');
@@ -13,16 +14,16 @@ export default function Floristica({comparison, Table}) {
   const rows=comparison.taxons.filter(row=>row.Tratamento===names && row.Nivel===level && (evidence==='Todos'||row.Evidencia===evidence));
   return <section className="panel">
     <h2>ITS do solo e inventário florístico</h2>
-    <p>Comparação exclusivamente entre o ITS do solo do projeto Serra do Rabo e o inventário de campo do Diagnóstico Florístico e Fitossociológico da Serra do Rabo, Lume Ambiental (março de 2025, Tabela 5, p. 61–65). Nenhuma ocorrência da literatura é incorporada. Registros de coleta/censo associados ao próprio diagnóstico são identificados separadamente nas análises auxiliares e sazonais.</p><p><b>WCVP v16</b> = World Checklist of Vascular Plants, versão 16 (lista mundial de nomes de plantas vasculares). A harmonização resolve sinônimos inequívocos, não adiciona ocorrências. Exemplo: Camptosema ellipticum → Cerradicola elliptica.</p><h3>1. Resumo quantitativo da concordância</h3><p>Uma linha por escala, grupo e nível taxonômico. Regional é a comparação principal com a Tabela 5.</p>
+    <p>Comparação exclusivamente entre o ITS do solo do projeto Serra do Rabo e o inventário de campo do Diagnóstico Florístico e Fitossociológico da Serra do Rabo, Lume Ambiental (março de 2025, Tabela 5, p. 61–65). Nenhuma ocorrência da literatura é incorporada. Registros de coleta/censo associados ao próprio diagnóstico são identificados separadamente nas análises auxiliares e sazonais.</p><WcvpExplanation/><PlateauExplanation metadata={metadata}/><p className="note"><b>Por que duas tabelas?</b> A primeira resume os números de concordância por escala e nível taxonômico; a segunda identifica os nomes e as evidências de cada táxon na comparação regional. A seleção da escala modifica apenas o resumo; a lista de táxons permanece regional.</p><h3>1. Resumo quantitativo da concordância</h3><p>Uma linha por escala, grupo e nível taxonômico. Regional é a comparação principal com a Tabela 5.</p>
     <label>Tratamento nomenclatural <select value={names} onChange={e=>setNames(e.target.value)}><option>WCVP v16</option><option>Original</option></select></label>
-    <label>Escala <select value={scope} onChange={e=>setScope(e.target.value)}>{['Regional',...new Set(comparison.resumo.map(r=>r.Escala).filter(s=>s!=='Regional'))].map(s=><option key={s}>{s}</option>)}</select></label><Table key={names+scope} rows={comparison.resumo.filter(r=>r.Tratamento===names&&r.Escala===scope)} name="concordancia_por_escala.csv"/><div className="chart-evidence"><h4>Colunas do resumo</h4><p><b>Tratamento</b>: nomes originais ou WCVP v16; <b>Escala</b>: regional, geofácies, platô ou subconjunto do levantamento; <b>Grupo</b>: categoria comparada; <b>Nivel</b>: família, gênero ou espécie; <b>ITS</b>: número de táxons distintos detectados no solo; <b>Campo</b>: número de táxons distintos registrados no diagnóstico; <b>Comuns</b>: compartilhados; <b>So_ITS</b> e <b>So_campo</b>: exclusivos; <b>Uniao</b>: todos os nomes distintos dos dois métodos; <b>Jaccard</b>: comuns/união; <b>Sorensen</b>: 2 × comuns/(ITS + Campo); <b>Unidades_ITS</b>: unidades moleculares avaliadas. Geofácies = ambiente/vegetação; platô = unidade espacial de relevo ferruginoso, S43/S44/S45.</p></div>
+    <label>Escala <select value={scope} onChange={e=>setScope(e.target.value)}>{['Regional',...new Set(comparison.resumo.map(r=>r.Escala).filter(s=>s!=='Regional'))].map(s=><option key={s}>{s}</option>)}</select></label><Table key={names+scope} rows={comparison.resumo.filter(r=>r.Tratamento===names&&r.Escala===scope)} name="concordancia_por_escala.csv"/>
     <h3>2. Evidências por táxon — lista regional</h3><p>Esta segunda tabela identifica os nomes responsáveis pela concordância regional e suas evidências moleculares e botânicas; não repete o resumo.</p>
     <label>Nível <select value={level} onChange={e=>setLevel(e.target.value)}>{['Família','Gênero','Espécie'].map(x=><option key={x}>{x}</option>)}</select></label>{' '}
     <label>Evidência <select value={evidence} onChange={e=>setEvidence(e.target.value)}>{['Compartilhado','Somente ITS','Somente campo','Todos'].map(x=><option key={x}>{x}</option>)}</select></label>
-    <Table key={[names,level,evidence].join('/')} rows={rows} name="taxons_filtrados.csv"/><div className="chart-evidence"><h4>Colunas da lista de táxons</h4><p><b>Tratamento</b>: regra nomenclatural; <b>Escala</b>: Regional; <b>Grupo</b>: Serra do Rabo; <b>Nivel</b>: nível taxonômico; <b>Taxon</b>: nome atribuído; <b>Evidencia</b>: compartilhado, somente ITS ou somente campo; <b>Unidades_ITS</b>: unidades com pelo menos uma leitura; <b>Leituras_ITS</b>: soma de leituras; <b>ASVs_ITS</b>: variantes atribuídas; <b>Registros_campo</b>: entradas do inventário associadas ao nome, não número de indivíduos. Zero indica ausência de registro nesse conjunto, não ausência biológica.</p></div>
+    <Table key={[names,level,evidence].join('/')} rows={rows} name="taxons_filtrados.csv"/>
     {comparison.figuras.map(figure=><figure key={figure.id}>
       <h3>{figure.title}</h3><img loading="lazy" style={{maxWidth:'100%',height:'auto'}} src={fileURL(figure.files.png)} alt={figure.title}/>
-      <figcaption>{figure.caption}</figcaption><FloristicEvidence figure={figure} comparison={comparison}/>
+      <figcaption>{figure.caption}</figcaption><FloristicEvidence figure={figure} comparison={comparison}/>{figure.id?.includes('Figura16')&&<PlateauExplanation metadata={metadata}/>} {figure.id?.includes('Figura18')&&<WcvpExplanation/>}
       <p>{Object.entries(figure.files).map(([format,path])=><a key={path} href={fileURL(path)} target="_blank" rel="noreferrer" style={{marginRight:'1rem'}}>{format.toUpperCase()}</a>)}</p>
     </figure>)}
     <h3>Relatório e dados completos</h3>
