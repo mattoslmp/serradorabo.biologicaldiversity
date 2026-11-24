@@ -44,8 +44,10 @@ try{
  const overlap=page.getByTestId('regional-overlap');await overlap.getByRole('heading',{name:'Táxons compartilhados entre ITS e inventário florístico',exact:true}).waitFor();
  const table=overlap.getByTestId('overlap-table');
  for(const [level,a,b,d] of [['Família',2,3,'+1'],['Gênero',4,4,'0'],['Espécie',6,8,'+2']]){
-  const row=table.getByRole('row').filter({has:table.getByRole('rowheader',{name:level,exact:true})});
-  assert.deepEqual(await row.getByRole('cell').allTextContents(),[String(a),String(b),d]);
+  const row=table.locator('tbody tr').filter({has:page.getByRole('rowheader',{name:level,exact:true})});
+  await row.waitFor({state:'visible'});
+  assert.equal(await row.count(),1);
+  assert.deepEqual(await row.locator('td').allTextContents(),[String(a),String(b),d]);
   for(const [t,v] of [['Original',a],['WCVP v16',b]])assert.equal(await overlap.getByTestId('overlap-chart').locator('[data-level="'+level+'"][data-treatment="'+t+'"] .overlap-count').innerText(),String(v));
  }
  for(const key of ['overlap-chart-explanation','overlap-table-explanation']){const e=overlap.getByTestId(key);assert.match(await e.innerText(),/World Checklist of Vascular Plants/);assert.match(await e.innerText(),/Camptosema ellipticum/);assert.match(await e.innerText(),/Comando de reprodução científica/);assert.match(await e.innerText(),/Concordancia_resumo.csv/);assert.match(await e.innerText(),/harmonizar.py/);assert.equal(await e.getByRole('link',{name:'WCVP v16 — repositório oficial de Kew',exact:true}).getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');}
