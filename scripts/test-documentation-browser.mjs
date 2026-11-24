@@ -43,6 +43,13 @@ try{
  await page.getByText('Por que duas tabelas?',{exact:true}).waitFor();
  const overlap=page.getByTestId('regional-overlap');await overlap.getByRole('heading',{name:'Táxons compartilhados entre ITS e inventário florístico',exact:true}).waitFor();
  const table=overlap.getByTestId('overlap-table');
+ // The comparison must follow both detailed scientific tables and their documentation,
+ // and precede the other floristic figures.
+ for(const name of ['concordancia_por_escala.csv','taxons_filtrados.csv']){
+   await doc(name);
+   assert.ok(await overlap.evaluate((el,n)=>Boolean(document.querySelector('[data-table-documentation="'+n+'"]').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING),name), 'Regional comparison must be below '+name);
+ }
+ assert.ok(await overlap.evaluate(el=>Boolean(el.compareDocumentPosition(el.nextElementSibling)&Node.DOCUMENT_POSITION_FOLLOWING)&&el.nextElementSibling?.tagName==='FIGURE'),'Regional comparison must precede the floristic figures');
  for(const [level,a,b,d] of [['Família',2,3,'+1'],['Gênero',4,4,'0'],['Espécie',6,8,'+2']]){
   const row=table.locator('tbody tr').filter({has:page.getByRole('rowheader',{name:level,exact:true})});
   await row.waitFor({state:'visible'});
