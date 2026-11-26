@@ -28,3 +28,9 @@ const historical=mergedRows(data,data.metadata,'Species','New_Field_ID');
 assert.ok(historical.length>0&&historical.every(x=>x.Identidade_pct===null&&x.Taxon_revisado===null));
 const shared=r.metadata.map(x=>({...x,Sample_Area:'fixture'}));
 assert.equal(mergedRows(r,shared,'Species','Sample_Area').find(x=>x.ASV==='c').Unidades_com_deteccao,3);
+
+const evidence=identityReview({...data,local_literature:{comparison:[{Rank:'Species',Taxon:'Genusa alba',Reads_ITS:2,Units_ITS:1,Detected_ITS:true}]},literature:{comparison_data:[{Rank:'Species',Taxon:'Genusa cana',Season:'Seca',View:'Sample_Area',Group:'S2A',Study_Reads:99}]},tip_metadata:{a:{Genus:'Genusa',Total_reads:2}}},{a:90,b:95,c:98,d:100});
+assert.deepEqual(evidence.local_literature.comparison[0],{Rank:'Species',Taxon:'Genusa alba',Reads_ITS:0,Units_ITS:0,Detected_ITS:false});
+assert.equal(evidence.literature.comparison_data[0].Study_Reads,1);
+assert.equal(evidence.tip_metadata.a.Identidade_pct,90);
+assert.match(evidence.tip_metadata.a.Genus,/Não classificado/);
