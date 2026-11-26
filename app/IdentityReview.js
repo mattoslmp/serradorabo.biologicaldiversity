@@ -14,7 +14,47 @@ export function IdentityRows({data,selected,rank,view,search,Table}) {
  </details></Localized>;
 }
 const positions={1:[83,105],2:[277,105],3:[180,74],4:[180,255],5:[120,185],6:[240,185],7:[180,145]};
-export function PlateauVenn({comparison,Table,metadata=[]}){const [mode,Mode]=useState('WCVP v16'),[src,Src]=useState('ITS');const plateaus=[...new Set(metadata.map(r=>String(r.Sample_Area||'').match(/^S\d+/)?.[0]).filter(Boolean))].sort();return <Localized><section data-testid="plateau-venn"><h3>Diagramas de Venn entre platôs</h3><p>Platô = unidade de relevo identificada pelo prefixo da área amostral; geofácies = tipo de ambiente. {plateaus.map(p=>p+': '+[...new Set(metadata.filter(r=>String(r.Sample_Area).match(/^S\d+/)?.[0]===p).map(r=>r.Sample_Area))].sort().join(', ')).join(' · ')}.</p>{!comparison.review_details?<p>Os diagramas revisados requerem a auditoria autenticada da matriz e os registros do inventário; não serão exibidas interseções inventadas.</p>:<><label>Nomenclatura <select value={mode} onChange={e=>Mode(e.target.value)}><option>WCVP v16</option><option>Original</option></select></label>{' '}<label>Fonte <select value={src} onChange={e=>Src(e.target.value)}><option>ITS</option><option>Campo</option></select></label><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))',gap:12}}>{Object.values(LEVELS).map(level=>{const {groups,patterns}=plateauPatterns(comparison,mode,level,src);return <article key={level}><h4>{level}</h4>{groups.length===3&&patterns.length===7?<svg role="img" aria-label={'Venn '+level+' '+src} viewBox="0 0 360 300" width="100%"><circle cx="135" cy="120" r="92" fill="#4686ae" fillOpacity=".28" stroke="#306082"/><circle cx="225" cy="120" r="92" fill="#66aa87" fillOpacity=".28" stroke="#247052"/><circle cx="180" cy="200" r="92" fill="#d5ae6a" fillOpacity=".28" stroke="#9d742b"/><text x="55" y="26">{groups[0]}</text><text x="262" y="26">{groups[1]}</text><text x="180" y="297" textAnchor="middle">{groups[2]}</text>{patterns.map(p=><g key={p.mask} tabIndex={0} aria-label={p.Grupos+': '+p.N+' táxons'}><title>{p.Grupos+': '+p.N+' táxons\n'+p.Taxa}</title><text x={positions[p.mask][0]} y={positions[p.mask][1]} textAnchor="middle" fontWeight="bold" fontSize="18">{p.N}</text></g>)}</svg>:<p>Três platôs não disponíveis no conjunto.</p>}<details><summary>Conferir as sete interseções e os táxons</summary><Table rows={patterns.map(({mask,...p})=>p)} name="intersecoes_platos.csv"/></details></article>})}</div><IdentityLegend comparison={comparison}/><p>Cada número representa uma região de interseção exata entre os três platôs. Círculos esquemáticos, não proporcionais. Passe o cursor ou use Tab para ver a lista de táxons. O corte incide apenas sobre o ITS, não sobre o inventário.</p></>}</section></Localized>}
+export function PlateauVenn({comparison,Table,metadata=[]}) {
+  const [mode,setMode]=useState('WCVP v16');
+  const [source,setSource]=useState('Ambos');
+  const plateaus=[...new Set(metadata.map(row=>String(row.Sample_Area||'').match(/^S\d+/)?.[0]).filter(Boolean))].sort();
+  const sources=source==='Ambos'?['ITS','Campo']:[source];
+  return <Localized><section data-testid="plateau-venn">
+    <h3>Diagramas de Venn entre platôs</h3>
+    <p>As campanhas ITS são reunidas por platô; o inventário florístico completo é usado sem filtro de data ou estação.</p>
+    <p>Platô = unidade de relevo identificada pelo prefixo da área amostral; geofácies = tipo de ambiente. {plateaus.map(plateau=>plateau+': '+[...new Set(metadata.filter(row=>String(row.Sample_Area).match(/^S\d+/)?.[0]===plateau).map(row=>row.Sample_Area))].sort().join(', ')).join(' · ')}.</p>
+    {!comparison.review_details?<p>Os diagramas revisados requerem a auditoria autenticada da matriz e os registros do inventário; não serão exibidas interseções inventadas.</p>:<>
+      <label>Nomenclatura <select value={mode} onChange={event=>setMode(event.target.value)}><option>WCVP v16</option><option>Original</option></select></label>{' '}
+      <label>Fonte <select value={source} onChange={event=>setSource(event.target.value)}><option value="Ambos">ITS e inventário florístico</option><option value="ITS">ITS</option><option value="Campo">Campo</option></select></label>
+      {sources.map(currentSource=><section key={currentSource} data-venn-source={currentSource}>
+        <h4>{currentSource==='ITS'?'ITS do solo':'Inventário florístico'}</h4>
+        <div className="plateau-venn-grid">
+          {Object.entries(LEVELS).map(([rank,level],index)=>{
+            const {groups,patterns}=plateauPatterns(comparison,mode,level,currentSource);
+            const panel=String.fromCharCode(65+index+(currentSource==='Campo'?3:0));
+            return <article key={level} data-venn-panel={panel}>
+              <h5>{panel+' · '+level}</h5>
+              {groups.length===3&&patterns.length===7?<svg role="img" aria-label={'Venn '+level+' '+currentSource} viewBox="0 0 360 310" width="100%">
+                <circle cx="135" cy="120" r="92" fill="#4686ae" fillOpacity=".28" stroke="#306082"/>
+                <circle cx="225" cy="120" r="92" fill="#66aa87" fillOpacity=".28" stroke="#247052"/>
+                <circle cx="180" cy="200" r="92" fill="#d5ae6a" fillOpacity=".28" stroke="#9d742b"/>
+                <text x="55" y="26">{groups[0]}</text><text x="262" y="26">{groups[1]}</text><text x="180" y="306" textAnchor="middle">{groups[2]}</text>
+                {patterns.map(pattern=><g key={pattern.mask} tabIndex={0} data-venn-mask={pattern.mask} aria-label={pattern.Grupos+': '+pattern.N+' táxons'}>
+                  <title>{pattern.Grupos+': '+pattern.N+' táxons\n'+pattern.Taxa}</title>
+                  <text x={positions[pattern.mask][0]} y={positions[pattern.mask][1]} textAnchor="middle" fontWeight="bold" fontSize="18">{pattern.N}</text>
+                </g>)}
+              </svg>:<p>Três platôs não disponíveis no conjunto.</p>}
+              {patterns.length===7&&<p className="plateau-venn-total">{'União: '+patterns.reduce((total,pattern)=>total+pattern.N,0)+' táxons'}</p>}
+              <details><summary>Conferir as sete interseções e os táxons</summary><Table rows={patterns.map(({mask,...pattern})=>({...pattern,Fonte:currentSource,Nivel:level,Tratamento:mode}))} name={'intersecoes_platos_'+currentSource+'_'+rank+'.csv'}/></details>
+            </article>;
+          })}
+        </div>
+      </section>)}
+      <IdentityLegend comparison={comparison}/>
+      <p>Cada número representa uma região de interseção exata entre os três platôs. Círculos esquemáticos, não proporcionais. Passe o cursor ou use Tab para ver a lista de táxons. O corte incide apenas sobre o ITS, não sobre o inventário.</p>
+    </>}
+  </section></Localized>;
+}
 export function OccupancyReview({comparison,Table}){const [mode,Mode]=useState('Original');if(!comparison.review_details)return null;const rows=occupancy(comparison,mode);return <Localized><section data-testid="occupancy-review"><h3>Sensibilidade ao número mínimo de unidades com detecção</h3><label>Nomenclatura <select value={mode} onChange={e=>Mode(e.target.value)}><option>Original</option><option>WCVP v16</option></select></label><p>Uma unidade é New_Field_ID, não uma geofácies nem um platô. Exigir duas unidades significa detectar o mesmo táxon em pelo menos dois IDs distintos, independentemente da área. A lista de campo é fixa. A recorrência não é um teste de significância.</p><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:14}}>{Object.values(LEVELS).map(level=>{const r=rows.filter(x=>x.Nivel===level),max=Math.max(1,...r.map(x=>x.ITS));return <article key={level}><h4>{level}</h4>{r.map(x=><div key={x.Min_unidades} title={'ITS: '+x.ITS+'; campo: '+x.Campo+'; comuns: '+x.Comuns+'; Jaccard: '+(x.Jaccard?.toFixed(3)??'NE')}><p className="small">≥{x.Min_unidades} unidade(s) · ITS {x.ITS} · comuns {x.Comuns}</p><div style={{height:14,width:(100*x.ITS/max)+'%',background:'#cbd5e1'}}><div style={{height:'100%',width:(x.ITS?100*x.Comuns/x.ITS:0)+'%',background:'#007e7a'}}/></div></div>)}</article>})}</div><p className="small">Cinza: táxons ITS; verde: parcela compartilhada. Eixo por nível. Jaccard = comuns / união; pode aumentar ou diminuir. <b>{POLICY_TEXT}</b></p><details><summary>Dados utilizados e índice de Jaccard</summary><Table rows={rows} name="sensibilidade_ocupacao_revisada.csv"/></details></section></Localized>}
 
 export function IdentitySummary({data,Table}){if(data.identity_review?.status!=='verified')return null;return <Localized><details><summary>Resumo da auditoria por nível taxonômico</summary><p>ASVs elegíveis, riqueza nominal e contagem de leituras por nível na matriz integral. Os níveis não são aditivos.</p><Table rows={data.identity_review.summary} name="taxonomia_resumo_identidade_revisada.csv"/></details></Localized>}
