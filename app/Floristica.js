@@ -1,4 +1,5 @@
 'use client';
+import {seasonalColumns} from '../lib/reviewEdition.mjs';
 import {Localized} from './Language';
 
 import {useState} from 'react';
@@ -27,7 +28,7 @@ export default function Floristica({comparison, Table, metadata=[],edition}) {
     <Table key={[names,level,evidence].join('/')} rows={rows} name="taxons_filtrados.csv"/>
     <RegionalOverlap comparison={comparison}/>
     <PlateauVenn comparison={comparison} Table={Table} metadata={metadata}/><RegionalVenn comparison={comparison} Table={Table}/><OccupancyReview comparison={comparison} Table={Table}/>
-    {edition&&<section><h3>Comparação por estação</h3><Table rows={edition.seasonal} name="concordancia_sazonal_revisada.csv"/></section>}
+    {edition&&<section><h3>Comparação por estação</h3><Table rows={edition.seasonal} name="concordancia_sazonal_revisada.csv" columns={seasonalColumns}/></section>}
     <details><summary>Figuras da edição histórica</summary>
     {comparison.figuras.filter(f=>!f.id?.includes('Figura16')&&(!comparison.identity_policy||!['Figura14','Figura15','Figura17','Figura18'].some(id=>f.id?.includes(id)))).map(figure=><figure key={figure.id}>
       <h3>{figure.title}</h3><img loading="lazy" style={{maxWidth:'100%',height:'auto'}} src={fileURL(figure.files.png)} alt={figure.title}/>
