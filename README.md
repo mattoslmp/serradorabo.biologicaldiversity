@@ -161,3 +161,9 @@ Família ≥90%, gênero ≥95%, espécie ≥98%: cortes operacionais do projeto
 O painel apresenta juntos seis diagramas: A–C para ITS do solo e D–F para o inventário florístico, nas colunas família, gênero e espécie. As sete regiões de cada Venn continuam calculadas por `plateauPatterns` a partir da concordância autenticada. Os filtros de fonte e nomenclatura são preservados; a abertura usa ambas as fontes e WCVP v16. As tabelas retráteis exportam a fonte, o nível e o tratamento de cada painel.
 
 O agrupamento usa todos os registros elegíveis de cada platô, sem filtro de estação. O inventário de campo completo não se restringe aos registros com data usados na comparação sazonal. Os círculos são esquemáticos e a exclusividade é relativa aos três platôs comparados. Nenhuma ocorrência, matriz ou contagem científica é incorporada ao código público.
+
+### Organização editorial das figuras — revisão de 26/11/2026
+
+Taxonomia, heatmaps de abundância e de presença/ausência e diversidade alfa e beta integram as figuras principais do relatório e do artigo revisados. A tabela de correspondência entre relatório, artigo, suplemento e plataforma acompanha o ZIP da entrega. A área Figuras oferece acesso direto ao artigo, ao relatório e ao material suplementar.
+
+Os identificadores Figura01–Figura21 usados pelo código pertencem ao acervo científico R5 e são preservados como chaves de proveniência. A numeração editorial dos documentos é independente desses identificadores; os downloads PNG/PDF originais continuam vinculados à entrega científica autenticada.
