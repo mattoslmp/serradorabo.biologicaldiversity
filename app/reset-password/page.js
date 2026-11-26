@@ -1,4 +1,5 @@
 'use client';
+import {Localized} from '../Language';
 import {useEffect,useState} from 'react';
 import {supabase,BASE} from '../../lib/client';
 import config from '../../lib/project.json';
@@ -62,7 +63,7 @@ export default function ResetPassword(){
     }finally{B(false);}
   }
 
-  return <main className="login canga-login">
+  return <Localized><main className="login canga-login">
     <header className="canga-login-header">
       <img src={BASE+'/brand/vale.svg'} alt="Vale" width="88" height="55"/>
       <div><h1>Serra do Rabo · Biological Diversity</h1><p>Definição de senha</p></div>
@@ -96,5 +97,5 @@ export default function ResetPassword(){
       {notice&&<p role="status">{notice}</p>}
       <p><a href={BASE+'/login/'}>← Voltar ao login</a></p>
     </section>
-  </main>;
+  </main></Localized>;
 }

@@ -1,4 +1,5 @@
 'use client';
+import {Localized} from '../Language';
 import {useEffect,useState} from 'react';
 import {BASE,supabase} from '../../lib/client';
 import {isPublicationAdmin} from '../../lib/publication';
@@ -47,7 +48,7 @@ export default function AdminPage(){
     }catch(e){S(e.message||'Não foi possível alterar a publicação.');}
     finally{B(false);}
   }
-  return <main className="canga-login admin-workspace">
+  return <Localized><main className="canga-login admin-workspace">
     <header className="canga-login-header"><h1>Serra do Rabo · Administração</h1></header>
     <section className="panel">
       <a href={BASE+'/'}>← Voltar ao atlas</a>
@@ -70,5 +71,5 @@ export default function AdminPage(){
       </>:<p role="alert">Acesso não autorizado. {status}</p>}
       {authorized&&status&&<p role="status">{status}</p>}
     </section>
-  </main>;
+  </main></Localized>;
 }

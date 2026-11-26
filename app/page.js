@@ -1,4 +1,5 @@
 'use client';
+import {Localized} from './Language';
 import {useState,useEffect} from 'react';
 import Atlas from './Atlas';
 import {member,BASE} from '../lib/client';
@@ -31,9 +32,9 @@ export default function Page(){
     return ()=>{active=false;};
   },[]);
   if(state.mode==='public_error')
-    return <main className="loading"><h1>Serra do Rabo</h1>
+    return <Localized><main className="loading"><h1>Serra do Rabo</h1>
       <p>Publicação pública temporariamente indisponível.</p>
-      <p role="alert">{state.error}</p><a href={BASE+'/login/'}>Entrar na área restrita</a></main>;
-  if(state.loading)return <main className="loading"><div className="brandmark">ITS</div><p>Verificando a modalidade de acesso…</p></main>;
-  return <Atlas publicMode={state.mode==='public'} initialData={state.data}/>;
+      <p role="alert">{state.error}</p><a href={BASE+'/login/'}>Entrar na área restrita</a></main></Localized>;
+  if(state.loading)return <Localized><main className="loading"><div className="brandmark">ITS</div><p>Verificando a modalidade de acesso…</p></main></Localized>;
+  return <Localized><Atlas publicMode={state.mode==='public'} initialData={state.data}/></Localized>;
 }

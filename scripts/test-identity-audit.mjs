@@ -15,3 +15,16 @@ const detail=old.resumo.map(x=>({...x,Taxon:{'Família':'Fabaceae','Gênero':'Ge
 const f=reviewFloristica(r,old,detail,w);assert.equal(f.resumo.find(x=>x.Nivel==='Espécie'&&x.Escala==='Regional').ITS,2);assert.equal(plateauPatterns(f,'Original','Espécie').patterns.find(x=>x.mask===7).N,1);assert.equal(occupancy(f,'Original').find(x=>x.Nivel==='Espécie'&&x.Min_unidades===3).Comuns,1);
 assert.throws(()=>identityReview(data,{a:90,b:95,c:98}));assert.throws(()=>reviewFloristica(r,old,detail,w.slice(0,3)));
 console.log('PASS: hierarchical identity cutoffs, read conservation, ASV identity, WCVP recalculation, Venn, occupancy, fail-closed source checks.');
+
+const combined=mergedRows(r,r.metadata,'Species','New_Field_ID');
+for(const [i,unit] of units.entries()){
+ const rows=combined.filter(x=>x.Grupo===unit);
+ assert.equal(new Set(rows.map(x=>x.ASV)).size,rows.length);
+ assert.equal(rows.reduce((n,x)=>n+x.Leituras,0),[14,3,9][i]);
+ assert.ok(Math.abs(rows.reduce((n,x)=>n+x.Percentual_do_grupo,0)-100)<1e-9);
+}
+assert.deepEqual([...new Set(mergedRows(r,r.metadata,'Species','New_Field_ID','cana').map(x=>x.ASV))],['c']);
+const historical=mergedRows(data,data.metadata,'Species','New_Field_ID');
+assert.ok(historical.length>0&&historical.every(x=>x.Identidade_pct===null&&x.Taxon_revisado===null));
+const shared=r.metadata.map(x=>({...x,Sample_Area:'fixture'}));
+assert.equal(mergedRows(r,shared,'Species','Sample_Area').find(x=>x.ASV==='c').Unidades_com_deteccao,3);
