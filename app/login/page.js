@@ -1,4 +1,5 @@
 'use client';
+import {Localized} from '../Language';
 import {useState} from 'react';
 import {signIn,sendPasswordRecovery,BASE} from '../../lib/client';
 export default function Login(){
@@ -17,7 +18,7 @@ export default function Login(){
     }catch(err){E(err.message||'Não foi possível conectar.');}
     finally{B(false);}
   }
-  return <main className="login canga-login">
+  return <Localized><main className="login canga-login">
     <header className="canga-login-header"><img src={BASE+'/brand/vale.svg'} alt="Vale" width="88" height="55"/><div><h1>Serra do Rabo · Biological Diversity</h1><p>Atlas de comunidades vegetais · Instituto Tecnológico Vale</p></div></header>
     <section className="login-form"><span className="eyebrow">ACESSO RESTRITO</span><h2>{recover?'Criar ou recuperar senha':'Entrar no atlas'}</h2>
       <p className="muted">Carajás · Amazônia brasileira</p>
@@ -32,5 +33,5 @@ export default function Login(){
       <button type="button" className="login-link" onClick={()=>{R(!recover);E('');N('')}}>{recover?'← Voltar ao login':'Primeiro acesso ou esqueci minha senha'}</button>
       <p className="small"><a href={BASE+'/reset-password/'}>O link do e-mail abre localhost? Definir senha por outro método</a></p><p className="small muted">Instituto Tecnológico Vale (ITV)</p>
     </section>
-  </main>;
+  </main></Localized>;
 }

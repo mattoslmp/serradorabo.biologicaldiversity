@@ -32,7 +32,7 @@ const pixel=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
 let browser;
 try{
  for(let i=0;i<100;i++){try{if((await fetch(site)).ok)break}catch{}await new Promise(r=>setTimeout(r,100));}
- browser=await chromium.launch({headless:true});const page=await browser.newPage();const errors=[];page.on('pageerror',err=>errors.push(err.message));
+ browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH});const page=await browser.newPage();const errors=[];page.on('pageerror',err=>errors.push(err.message));
  await page.route('**/rest/v1/atlas_publication**',r=>r.fulfill({json:{public_enabled:true,release},headers:{'access-control-allow-origin':'*'}}));
  await page.route('**/rest/v1/atlas_public_releases**',r=>r.fulfill({json:{release},headers:{'access-control-allow-origin':'*'}}));
  await page.route('**/storage/v1/object/public/serradorabo-public/**',r=>{const u=r.request().url();if(u.endsWith('atlas_data.json'))return r.fulfill({json:data,headers:{'access-control-allow-origin':'*'}});if(u.endsWith('.png'))return r.fulfill({body:pixel,contentType:'image/png',headers:{'access-control-allow-origin':'*'}});if(u.endsWith('Alfa_testes.csv'))return r.fulfill({body:'Dataset,Metric,Q_BH\nPadronizada,Shannon,0.8\n',contentType:'text/csv',headers:{'access-control-allow-origin':'*'}});return r.fulfill({body:'fixture',headers:{'access-control-allow-origin':'*'}})});
@@ -40,14 +40,14 @@ try{
  const doc=async name=>{const p=page.locator('[data-table-documentation="'+name+'"]');await p.waitFor({state:'visible'});for(const label of ['Significado de cada coluna','Fonte e dados de entrada (input)','Método','Dados processados','Resultado (output)','Scripts utilizados','Comando de reprodução'])assert.ok((await p.innerText()).includes(label),name+' '+label);return p;};
  await page.goto(site);
  await tab('Inventário florístico');
- await page.getByText('Por que duas tabelas?',{exact:true}).waitFor();
+ await page.getByRole('heading',{name:'Concordância por escala',exact:true}).waitFor();
  const overlap=page.getByTestId('regional-overlap');await overlap.getByRole('heading',{name:'Táxons compartilhados entre ITS e inventário florístico',exact:true}).waitFor();
  const table=overlap.getByTestId('overlap-table');
- // The comparison must follow both detailed scientific tables and their documentation,
+ // The comparison must follow both detailed scientific tables,
  // and precede the other floristic figures.
  for(const name of ['concordancia_por_escala.csv','taxons_filtrados.csv']){
-   await doc(name);
-   assert.ok(await overlap.evaluate((el,n)=>Boolean(document.querySelector('[data-table-documentation="'+n+'"]').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING),name), 'Regional comparison must be below '+name);
+   assert.equal(await page.locator('[data-table-documentation]').count(),0);
+   assert.ok(await overlap.evaluate((el,n)=>Boolean(document.querySelector('[data-result-table="'+n+'"]').compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING),name), 'Regional comparison must be below '+name);
  }
  assert.ok(await overlap.evaluate(el=>Boolean(el.compareDocumentPosition(el.nextElementSibling)&Node.DOCUMENT_POSITION_FOLLOWING)&&el.nextElementSibling?.dataset.testid==='plateau-venn'),'Regional comparison must precede the floristic figures');
  for(const [level,a,b,d] of [['Família',2,3,'+1'],['Gênero',4,4,'0'],['Espécie',6,8,'+2']]){
@@ -57,28 +57,43 @@ try{
   assert.deepEqual(await row.locator('td').allTextContents(),[String(a),String(b),d]);
   for(const [t,v] of [['Original',a],['WCVP v16',b]])assert.equal(await overlap.getByTestId('overlap-chart').locator('[data-level="'+level+'"][data-treatment="'+t+'"] .overlap-count').innerText(),String(v));
  }
- for(const key of ['overlap-chart-explanation','overlap-table-explanation']){const e=overlap.getByTestId(key);assert.match(await e.innerText(),/World Checklist of Vascular Plants/);assert.match(await e.innerText(),/Camptosema ellipticum/);assert.match(await e.innerText(),/Comando de reprodução científica/);assert.match(await e.innerText(),/Concordancia_resumo.csv/);assert.match(await e.innerText(),/harmonizar.py/);assert.equal(await e.getByRole('link',{name:'WCVP v16 — repositório oficial de Kew',exact:true}).getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');}
  const expectedRows=await table.innerText();const treatment=page.getByRole('combobox',{name:'Tratamento nomenclatural',exact:true});await treatment.selectOption('Original');assert.equal(await treatment.inputValue(),'Original');assert.equal(await table.innerText(),expectedRows);await treatment.selectOption('WCVP v16');assert.equal(await treatment.inputValue(),'WCVP v16');
- console.log('PASS: six original/WCVP bars and corresponding numerical cells, explanation/source under each, independent of treatment filter (synthetic fixture).');
- const s=await doc('concordancia_por_escala.csv'),t=await doc('taxons_filtrados.csv');
- assert.match(await s.innerText(),/Total de unidades de campo ITS avaliadas/);
- assert.match(await t.innerText(),/Quantidade de unidades New_Field_ID com pelo menos uma leitura/);
- assert.equal(await page.getByRole('link',{name:'WCVP v16 — repositório oficial de Kew',exact:true}).first().getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');
- await page.getByTestId('plateau-venn').waitFor();assert.equal(await page.getByRole('heading',{name:'Prancha teste 16',exact:true}).count(),0);
- assert.equal(await page.locator('figure').filter({has:page.getByRole('heading',{name:'Comando de reprodução',exact:true})}).count(),7);
- await tab('Interseções');await doc('intersecoes_exatas.csv');await page.getByRole('cell',{name:'Exclusivo no recorte',exact:true}).first().waitFor();
+ await page.getByTestId('plateau-venn').waitFor();
+ await page.getByText('Figuras da edição histórica',{exact:true}).click();
+ assert.equal(await page.getByRole('heading',{name:'Prancha teste 16',exact:true}).count(),0);
+ assert.equal(await page.locator('figure').count(),7);
+ await tab('Interseções');await page.getByRole('cell',{name:'Exclusivo no recorte',exact:true}).first().waitFor();
  await page.getByLabel('Área amostral',{exact:true}).selectOption('S01A');
  await page.getByRole('cell',{name:'Grupo único — sem comparação',exact:true}).first().waitFor();
  await page.getByLabel('Área amostral',{exact:true}).selectOption('Todas');
- await tab('Taxonomia');await doc('taxonomia_Genus.csv');
- await tab('Diversidade alfa');await doc('alfa_testes.csv');
- await tab('Diversidade beta');await doc('beta_tests.csv');
- await tab('Diferencial');await doc('diferencial_Genus_DESeq2.csv');
- await tab('Filogenia');await doc('filogenia_metadados_taxonomia.csv');
- await tab('Presença e ausência');await doc('Presenca_Ausencia_Genus_COMPLETA.csv');
- await tab('Literatura');const l=await doc('literatura_comparacao.csv');assert.match(await l.innerText(),/detectado no nosso ITS/);await doc('literatura_serra_do_rabo_ITS.csv');await doc('literatura_fontes.csv');
- await tab('Materiais e métodos');await page.getByRole('heading',{name:'Materiais e métodos — protocolo científico completo'}).waitFor();await page.getByTestId('regional-overlap').getByTestId('overlap-table').waitFor({state:'visible'});await page.getByRole('heading',{name:'4. Fichas metodológicas de todas as figuras disponíveis'}).waitFor();await page.getByRole('button',{name:'Expandir todas as fichas'}).click();await page.locator('.method-figure').filter({hasText:'Figura18_fixture'}).first().waitFor();await tab('Figuras');await page.getByRole('button',{name:/Prancha alfa teste/}).click();await page.getByRole('heading',{name:'Comando de reprodução'}).waitFor();
- await tab('Tabelas');await doc('Alfa_testes.csv');await page.getByText('Valor p ajustado por Benjamini–Hochberg, para a família de testes definida no método.',{exact:true}).waitFor();
+ await tab('Taxonomia');
+ const joined=page.getByTestId('joined-asvs');assert.equal(await joined.getAttribute('open'),null);
+ assert.ok(await joined.evaluate(el=>el.previousElementSibling.classList.contains('legend')));
+ await joined.locator('summary').click();
+ const joinedTable=joined.locator('table');await joinedTable.getByRole('cell',{name:'fixture-asv',exact:true}).waitFor();
+ assert.match(await joinedTable.innerText(),/Identidade \(%\)/);
+ assert.match(await joinedTable.innerText(),/Leituras do grupo/);
+ for(const name of ['Diversidade alfa','Diversidade beta','Diferencial','Filogenia','Presença e ausência','Literatura','Tabelas','Figuras']){
+  await tab(name);assert.equal(await page.locator('[data-table-documentation]').count(),0);
+ }
+ await tab('Materiais e métodos');await page.getByRole('heading',{name:'Materiais e métodos — protocolo científico completo'}).waitFor();
+ const s=await doc('concordancia_por_escala.csv'),t=await doc('taxons_filtrados.csv');
+ assert.match(await s.innerText(),/Total de unidades de campo ITS avaliadas/);
+ assert.match(await t.innerText(),/Quantidade de unidades New_Field_ID com pelo menos uma leitura/);
+ for(const key of ['overlap-chart-explanation','overlap-table-explanation']){const e=page.getByTestId('regional-overlap').getByTestId(key);assert.match(await e.innerText(),/World Checklist of Vascular Plants/);assert.match(await e.innerText(),/Camptosema ellipticum/);assert.match(await e.innerText(),/Comando de reprodução científica/);assert.match(await e.innerText(),/Concordancia_resumo.csv/);assert.match(await e.innerText(),/harmonizar.py/);assert.equal(await e.getByRole('link',{name:'WCVP v16 — repositório oficial de Kew',exact:true}).getAttribute('href'),'https://kew.iro.bl.uk/entities/product/998399a0-4b87-4a93-8303-6abc8a2de281');}
+ await doc('intersecoes_exatas.csv');const l=await doc('literatura_comparacao.csv');assert.match(await l.innerText(),/detectado no nosso ITS/);
+ await page.getByRole('button',{name:'Expandir todas as fichas'}).click();
+ await page.locator('.method-figure').filter({hasText:'Figura18_fixture'}).first().waitFor();
+ await page.getByRole('combobox',{name:'Tabela científica'}).selectOption('Alfa_testes.csv');
+ await doc('Alfa_testes.csv');
+ await page.getByRole('button',{name:'English',exact:true}).click();
+ await page.waitForFunction(()=>document.documentElement.lang==='en');
+ await tab('Taxonomy');
+ await page.getByText('ASVs, taxonomy and identity (%)',{exact:true}).waitFor();
+ await page.reload();await page.getByRole('button',{name:'Taxonomy',exact:true}).waitFor();
+ assert.equal(await page.locator('html').getAttribute('lang'),'en');
+ await page.getByRole('button',{name:'Português',exact:true}).click();
+ await page.getByRole('button',{name:'Taxonomia',exact:true}).waitFor();
  assert.deepEqual(errors,[]);
- console.log('PASS: documentation below all exercised tables, seven historical floristic figures (spatial heatmap removed), WCVP/plateau sources, two intersection scenarios, and static figure documentation (synthetic browser fixture only).');
+ console.log('PASS: joined ASV table, bilingual navigation, persistent choice, seasonal filters, WCVP sources, regional plots and documentation in Methods (synthetic browser fixture only).');
 }finally{await browser?.close();server.kill();if(base)await rm(root,{recursive:true,force:true});}
