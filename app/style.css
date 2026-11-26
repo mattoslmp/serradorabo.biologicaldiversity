@@ -40,3 +40,13 @@
 .language-dock button[aria-pressed=true]{background:#dce9e1;color:#0a514b;font-weight:700}
 .asv-detail{margin:.8rem 0;padding:.75rem 1rem;border:1px solid #c7d6d0;border-radius:.5rem}
 .asv-detail summary{cursor:pointer;font-weight:650}
+
+/* Matched plateau panels remain comparable across the two evidence sources. */
+.plateau-venn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.plateau-venn-grid article{min-width:0}
+.plateau-venn-grid h5{font-size:1rem;margin:.3rem 0 .6rem}
+.plateau-venn-grid svg{display:block;max-width:390px;margin:auto}
+.plateau-venn-grid details{margin:10px 0 18px}
+.plateau-venn-total{text-align:center;font-size:.9rem;margin:.4rem 0}
+[data-venn-source]>h4{font-size:1.1rem;margin:1.5rem 0 .8rem}
+@media(max-width:760px){.plateau-venn-grid{grid-template-columns:1fr}}

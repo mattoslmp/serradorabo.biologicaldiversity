@@ -155,3 +155,9 @@ Na aba Inventário florístico, abaixo das duas tabelas detalhadas (concordânci
 
 ### Revisão hierárquica da identidade ITS
 Família ≥90%, gênero ≥95%, espécie ≥98%: cortes operacionais do projeto, não limiares universais. A interface autenticada confere a auditoria privada por SHA-256 e recalcula as matrizes por rank, mantendo o total de leituras e categorias Não classificado. A concordância por escala usa a lista botânica original e WCVP v16; Venn por platô e sensibilidade são recalculados. Gráficos estáticos e testes inferenciais anteriores permanecem históricos. As tabelas retráteis e tooltips usam ASVs efetivamente presentes; cobertura e hits concorrentes não disponíveis. Se a fonte não puder ser verificada, a interface sinaliza dados históricos. A revisão não expõe dados privados em builds públicos.
+
+### Venn entre platôs — revisão de 26/11/2026
+
+O painel apresenta juntos seis diagramas: A–C para ITS do solo e D–F para o inventário florístico, nas colunas família, gênero e espécie. As sete regiões de cada Venn continuam calculadas por `plateauPatterns` a partir da concordância autenticada. Os filtros de fonte e nomenclatura são preservados; a abertura usa ambas as fontes e WCVP v16. As tabelas retráteis exportam a fonte, o nível e o tratamento de cada painel.
+
+O agrupamento usa todos os registros elegíveis de cada platô, sem filtro de estação. O inventário de campo completo não se restringe aos registros com data usados na comparação sazonal. Os círculos são esquemáticos e a exclusividade é relativa aos três platôs comparados. Nenhuma ocorrência, matriz ou contagem científica é incorporada ao código público.
